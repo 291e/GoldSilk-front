@@ -1,11 +1,15 @@
 {
   "name": "goldsilk-front",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "parcel build index.html --no-scope-hoist",
+    "start": "parcel index.html"
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
 }

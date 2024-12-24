@@ -1,30 +1,30 @@
-import { fetchUserProfile } from "../../api/auth.js";
+import { fetchUserProfile } from "../../app/auth.js";
 
 class HeaderComponent extends HTMLElement {
   async connectedCallback() {
     const menuItems = [
-      { name: "BRAND", link: "brand.html" },
-      { name: "혼주한복", link: "product/honju.html" },
-      { name: "신랑신부한복", link: "product/wedding.html" },
-      { name: "여성한복", link: "product/women.html" },
-      { name: "아동한복", link: "product/children.html" },
-      { name: "돌잔치한복", link: "product/firstbirthday.html" },
-      { name: "맞춤한복", link: "product/custom.html" },
-      { name: "생활한복", link: "product/daily.html" },
-      { name: "화보촬영", link: "photoshoot.html" },
-      { name: "협찬", link: "sponsorship.html" },
-      { name: "COMMUNITY", link: "community.html" },
+      { name: "BRAND", link: "/brand.html" },
+      { name: "혼주한복", link: "/product/honju.html" },
+      { name: "신랑신부한복", link: "/product/wedding.html" },
+      { name: "여성한복", link: "/product/women.html" },
+      { name: "아동한복", link: "/product/children.html" },
+      { name: "돌잔치한복", link: "/product/firstbirthday.html" },
+      { name: "맞춤한복", link: "/product/custom.html" },
+      { name: "생활한복", link: "/product/daily.html" },
+      { name: "화보촬영", link: "/photoshoot.html" },
+      { name: "협찬", link: "/sponsorship.html" },
+      { name: "COMMUNITY", link: "/community.html" },
     ];
 
-    let profileLink = "user/login.html"; // 기본 로그인 링크 설정
-    let cartLink = "cart/cart.html"; // 기본 장바구니 링크 설정
+    let profileLink = "/user/login.html"; // 기본 로그인 링크 설정
+    let cartLink = "/cart/cart.html"; // 기본 장바구니 링크 설정
     let isLoggedIn = false; // 로그인 여부
 
     // 로그인 상태 확인
     try {
       const user = await fetchUserProfile();
       if (user) {
-        profileLink = "user/profile.html"; // 로그인된 경우 프로필 페이지
+        profileLink = "/user/profile.html"; // 로그인된 경우 프로필 페이지
         isLoggedIn = true;
       }
     } catch (error) {
@@ -35,8 +35,8 @@ class HeaderComponent extends HTMLElement {
       <div class="header">
         <div class="inner">
           <!-- 로고 -->
-          <a href="http://goldsilk.metashopping.kr/goldGroup/" class="logo-wrapper">
-            <img src="public/logo.jpg" alt="logo" class="logo" />
+          <a href="/" class="logo-wrapper">
+            <img src="/public/logo.jpg" alt="logo" class="logo" />
           </a>
 
           <!-- 데스크톱 메뉴 -->
@@ -51,7 +51,7 @@ class HeaderComponent extends HTMLElement {
 
           <!-- 사용자 아이콘 -->
           <a class="user-icon" href="${
-            isLoggedIn ? profileLink : "user/login.html"
+            isLoggedIn ? profileLink : "/user/login.html"
           }">
             ${
               isLoggedIn
@@ -62,7 +62,7 @@ class HeaderComponent extends HTMLElement {
 
           <!-- 장바구니 아이콘 -->
           <a class="user-icon" href="${
-            isLoggedIn ? cartLink : "user/login.html"
+            isLoggedIn ? cartLink : "/user/login.html"
           }">
             <i class="fa-solid fa-cart-shopping"></i>
           </a>

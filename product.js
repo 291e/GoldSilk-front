@@ -1,4 +1,4 @@
-import { fetchProductById } from "./api/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
+import { fetchProductById } from "./app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
 import { formatImagePath } from "./components/utils/image.js";
 
 // URL에서 상품 ID 가져오기

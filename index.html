@@ -4,17 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>황금단 - 전통과 현대의 조화를 이루는 한복 전문 쇼핑몰</title>
-    <base href="http://goldsilk.metashopping.kr/" />
+    <!-- Google Fonts를 HTTPS로 변경 -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
 
-    <link
-      href="//fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="//fonts.googleapis.com" />
-    <link
-      href="//fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Swiper 및 Font Awesome -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/swiper/swiper-bundle.min.css"
@@ -23,9 +24,13 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="./product/product.css" />
-    <link rel="stylesheet" href="page.css" />
+
+    <!-- 정적 파일 상대 경로 -->
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/product/product.css" />
+    <link rel="stylesheet" href="/page.css" />
+
+    <!-- Swiper JS -->
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
   </head>
   <body>
@@ -51,7 +56,7 @@
       <div class="longBanner">
         <a href="./">
           <img
-            src="public/longBanner/main_longbanner01.jpg"
+            src="/public/longBanner/main_longbanner01.jpg"
             alt="main_longbanner01"
           />
         </a>
@@ -61,8 +66,8 @@
       <div class="longBanner">
         <a href="./">
           <img
-            src="public/longBanner/main_longbanner02.jpg"
-            alt="main_longbanner01"
+            src="/public/longBanner/main_longbanner02.jpg"
+            alt="main_longbanner02"
           />
         </a>
       </div>
@@ -73,7 +78,7 @@
         <a href="./">
           <img
             src="public/longBanner/main_longbanner03.jpg"
-            alt="main_longbanner01"
+            alt="main_longbanner03"
           />
         </a>
       </div>
@@ -116,7 +121,8 @@
 
     <footer-component></footer-component>
 
-    <script type="module" src="components/layout.js"></script>
-    <script type="module" src="api/api.js"></script>
+    <!-- JavaScript 상대 경로 -->
+    <script type="module" src="/components/layout.js"></script>
+    <script type="module" src="/app/api.js"></script>
   </body>
 </html>

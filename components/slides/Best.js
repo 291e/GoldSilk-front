@@ -1,4 +1,4 @@
-import { fetchProducts, addToCart } from "../../api/api.js"; // JSON 데이터를 가져오는 API 함수
+import { fetchProducts, addToCart } from "../../app/api.js"; // JSON 데이터를 가져오는 API 함수
 import { formatImagePath } from "../utils/image.js";
 
 class BestProductComponent extends HTMLElement {

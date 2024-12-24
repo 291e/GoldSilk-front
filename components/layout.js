@@ -1,5 +1,5 @@
 import HeaderComponent from "./layout/HeaderComponent.js";
-import FooterComponent from "./layout/FooterCoponent.js";
+import FooterComponent from "./layout/FooterComponent.js";
 import AdBanner from "./layout/AdBanner.js";
 import Widget from "./layout/Widget.js";
 import BannerComponent from "./slides/Banner.js";
