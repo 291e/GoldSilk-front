@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인</title>
+    <base href="http://goldsilk.metashopping.kr/goldGroup/" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="user/user.css" />
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <div class="container">
+      <!-- 로그인 폼 -->
+      <div class="form-container">
+        <h2>로그인</h2>
+        <form id="loginForm">
+          <div class="login-container">
+            <!-- 이메일 입력 -->
+            <input type="email" id="loginEmail" placeholder="이메일" required />
+
+            <!-- 비밀번호 입력 -->
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="비밀번호"
+              required
+            />
+
+            <!-- 아이디 저장 및 비밀번호 찾기 추가 -->
+            <div class="additional-options">
+              <label for="rememberMe">
+                <input type="checkbox" id="rememberMe" />
+                아이디 저장
+              </label>
+              <div class="links">
+                <a href="user/findId.html">아이디 찾기</a> |
+                <a href="user/findPassword.html">비밀번호 찾기</a>
+              </div>
+            </div>
+
+            <!-- 로그인 버튼 -->
+            <button type="submit" id="loginButton" style="margin-top: 20px">
+              로그인
+            </button>
+          </div>
+        </form>
+
+        <!-- 메시지 출력 영역 -->
+        <div id="loginMessage"></div>
+
+        <!-- 회원가입 링크 -->
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+          "
+        >
+          <div style="display: flex; flex-direction: column; font-size: 14px">
+            <span style="font-weight: bold">아직 회원이 아니신가요?</span>
+            <span>회원이 되시면 다양한 혜택을 누리실 수 있습니다.</span>
+          </div>
+          <a href="user/register.html"
+            ><button id="register-btn">회원가입</button></a
+          >
+        </div>
+      </div>
+    </div>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="components/layout/layout.js"></script>
+
+    <script type="module" src="user/login.js"></script>
+  </body>
+</html>

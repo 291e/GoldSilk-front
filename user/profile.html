@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>프로필 페이지</title>
+    <base href="http://goldsilk.metashopping.kr/goldGroup/" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="user/user.css" />
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <div class="container">
+      <div class="profile-section">
+        <h1>My Page</h1>
+        <div class="user-info">
+          <p id="username">사용자 이름: <span>로딩 중...</span></p>
+          <p id="email">이메일: <span>로딩 중...</span></p>
+        </div>
+        <button id="logout-button" class="logout-button">로그아웃</button>
+      </div>
+    </div>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="components/layout/layout.js"></script>
+    <script type="module" src="user/profile.js"></script>
+  </body>
+</html>

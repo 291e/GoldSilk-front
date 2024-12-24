@@ -1,0 +1,49 @@
+{
+  "1": {
+    "id": "1",
+    "name": "초록날개치마+화이트블링당의",
+    "price": 1000000,
+    "images": ["public/product/product01.jpg"],
+    "description": "이 상품은 고급스러운 디자인의 초록날개치마입니다.",
+    "detailImages": [
+      "public/product/product01.jpg",
+      "public/detail/detail01.jpg",
+      "public/detail/detail01-2.jpg"
+    ],
+    "category": "혼주한복",
+    "tag": ["NEW", "BEST"]
+  },
+  "2": {
+    "id": "2",
+    "name": "파란드레스+보석당의",
+    "price": 1200000,
+    "images": ["public/product/product02.jpg"],
+    "description": "화려한 파란드레스와 보석당의의 조화가 돋보이는 상품입니다.",
+    "detailImages": [
+      "public/product/product02.jpg",
+      "public/detail/detail02.jpg"
+    ],
+    "category": "여성한복",
+    "tag": ["NEW", "BEST"]
+  },
+  "3": {
+    "id": "3",
+    "name": "[커플] 프로포즈",
+    "price": 1000000,
+    "images": ["public/product/product03.jpg"],
+    "description": "프로포즈에 적합한 한복입니다.",
+    "detailImages": ["public/product/product03.jpg"],
+    "category": "신랑신부한복",
+    "tag": ["NEW", "BEST"]
+  },
+  "4": {
+    "id": "4",
+    "name": "[커플] 홀다올",
+    "price": 1100000,
+    "images": ["public/product/product04.jpg"],
+    "description": "홀다올 한복 세트입니다.",
+    "detailImages": ["public/product/product04.jpg"],
+    "category": "신랑신부한복",
+    "tag": ["NEW", "BEST"]
+  }
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>황금단 - 전통과 현대의 조화를 이루는 한복 전문 쇼핑몰</title>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="page.css" />
+    <script src="https://unpkg.com/navigo"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  </head>
+  <body>
+    <ad-banner-component></ad-banner-component>
+    <header-component></header-component>
+
+    <main>
+      <div class="brand-page">
+        <!-- 상단 이미지와 텍스트 -->
+        <div class="brand-banner">
+          <img class="brand-image" src="public/pages/brand/brand_top.jpg" />
+          <div class="brand-banner-text">
+            <span>(주)황금단</span>
+            <div class="line-bar"></div>
+            <span>한복을 디자인하는 전문기업</span>
+            <span
+              >우리나라의 의복 "한복"을 전문으로 디자인하고 제작하며,<br />
+              한복의 아름다움과 가치를 세상 모든분들과 함께 나누고자
+              합니다.</span
+            >
+          </div>
+        </div>
+
+        <!-- 메뉴 버튼 -->
+        <div class="brand-menu">
+          <button id="intro-btn" class="menu-btn active">황금단 소개</button>
+          <button id="history-btn" class="menu-btn">황금단 연혁</button>
+        </div>
+
+        <!-- 황금단 소개 -->
+        <div id="brand-intro" class="brand-content">
+          <div class="intro-section">
+            <div class="intro-text">
+              <h2>황금단 디자인은...</h2>
+              <p>
+                2005년 처음 문을 연 황금단은 전통 한복 특유의 아름다움에
+                독창적인 디자인을 접목해, 오트 쿠튀르를 표방하는 한국 전통
+                브랜드입니다.
+              </p>
+              <p>
+                고급스럽고 독특한 소재와 감각적인 디자인은 황금단 마니아가
+                생길만큼 다양한 고객들의 취향을 두루 만족시키며, 폭넓은 사랑을
+                받고 있습니다.
+              </p>
+            </div>
+            <div class="intro-image">
+              <img
+                src="public/pages/brand/brand_img01.jpg"
+                alt="황금단 디자인"
+              />
+            </div>
+          </div>
+
+          <div class="intro-section">
+            <div class="intro-image">
+              <img src="public/pages/brand/brand_img02.jpg" alt="황금단 고집" />
+            </div>
+            <div class="intro-text">
+              <h2>황금단의 기특한 고집</h2>
+              <p>
+                패턴의 양강화, 완성도 높은 바느질, 디자인의 다양화를 통해
+                고객들에게 최고를 제공하고 있습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 황금단 연혁 -->
+        <div id="brand-history" class="brand-content hidden">
+          <div class="history-section">
+            <h2>2005년 ~ 2016년</h2>
+            <ul>
+              <li>2005: 황금단 설립</li>
+              <li>2006: 공장 설립</li>
+              <li>2009: 체인점 1호점 오픈</li>
+              <li>2013: 순천점 오픈</li>
+              <!-- 다른 연혁들 추가 -->
+            </ul>
+          </div>
+
+          <div class="history-section">
+            <h2>2017년 ~ 2024년</h2>
+            <ul>
+              <li>2017: 종로매장 오픈</li>
+              <li>2020: 한복 1억 2천만원 상당 기증</li>
+              <li>2023: 법인 설립</li>
+              <li>2024: 한복 페션쇼 진행</li>
+              <!-- 다른 연혁들 추가 -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- 지도 영역 -->
+        <div class="map">
+          <h2>오시는 길</h2>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3164.3968441015443!2d127.0415267152943!3d37.50677667980895!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca4f4f0a1a9fd%3A0x24b2d422b7b15c44!2z7ISc7Jq47Yq567OEIOyCrO2EsOyngCDslYTsp4Dsnbgg7ISc7ZaI!5e0!3m2!1sko!2skr!4v1699624007891!5m2!1sko!2skr"
+            width="400"
+            height="400"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </main>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="components/layout.js"></script>
+    <script src="brand.js"></script>
+  </body>
+</html>

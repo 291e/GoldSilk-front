@@ -1,0 +1,111 @@
+<!--demo code of face_swap with provided face, target, background images-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate</title>
+</head>
+<body>
+    <h1>Run Workflow</h1>
+    <form id="workflow-form" enctype="multipart/form-data">
+        <label for="face_file">Face Image File:</label><br>
+        <input type="file" id="face_file" name="face_file" accept="image/*"><br><br>
+        <img id="face_preview" src="" alt="Face Image Preview" style="display: none; width: 100px; height: auto;"><br><br>
+
+        <label for="target_file">Target Image File:</label><br>
+        <input type="file" id="target_file" name="target_file" accept="image/*"><br><br>
+        <img id="target_preview" src="" alt="Target Image Preview" style="display: none; width: 100px; height: auto;"><br><br>
+
+<!--        <label for="background_file">Background Image File:</label><br>-->
+<!--        <input type="file" id="background_file" name="background_file" accept="image/*"><br><br>-->
+<!--        <img id="background_preview" src="" alt="Background Image Preview" style="display: none; width: 100px; height: auto;"><br><br>-->
+
+        <button type="submit">Run Workflow</button>
+    </form>
+
+    <div id="response"></div>
+    <img id="generated-image" src="" alt="Generated Image" style="display:none; width: 300px; height: auto;">
+
+    <script>
+        document.getElementById('workflow-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const responseElement = document.getElementById('response');
+            const imageElement = document.getElementById('generated-image');
+            responseElement.innerHTML = 'Processing...';
+            imageElement.style.display = 'none';  // Hide the image initially
+
+            const formData = new FormData();
+            formData.append('face_file', document.getElementById('face_file').files[0]);
+            formData.append('target_file', document.getElementById('target_file').files[0]);
+            // formData.append('background_file', document.getElementById('background_file').files[0]);
+            
+            await checkWorkflowStatus(formData, responseElement, imageElement);
+            
+        });
+
+        async function checkWorkflowStatus(formData, responseElement, imageElement) {
+            try {
+                const response = await fetch('http://127.0.0.1:5001/run_workflow/face_swap', {
+                //const response = await fetch('http://192.168.1.42:5001/run_workflow/face_swap', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.status === 'waiting') {
+                    responseElement.innerHTML = `Waiting: ${result.position} requests ahead ...`;
+                    // console.log(`Waiting: ${result.position} requests ahead`);
+                    setTimeout(() => checkWorkflowStatus(formData, responseElement, imageElement), 5000);
+                }
+                else if(response.ok) {
+                    responseElement.innerHTML = 'Image Generated!';
+
+                    // Update image src with the URL returned from the server
+                    // Extract the Base64 image string from the server response
+                    const base64Image = result.image_base64; // Assume the server sends this
+
+                    // Set the image's src attribute using the Base64 string
+                    imageElement.src = `data:image/png;base64,${base64Image}`;
+                    imageElement.style.display = 'block';  // Show the generated image
+                }
+
+                else {
+                    responseElement.innerHTML = 'Error: ' + result.error;
+                }
+            } catch (error) {
+                responseElement.innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        // Image preview functions
+        function previewImage(input, previewId) {
+            const file = input.files[0];
+            const preview = document.getElementById(previewId);
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Add event listeners for file inputs to trigger image previews
+        document.getElementById('face_file').addEventListener('change', function() {
+            previewImage(this, 'face_preview');
+        });
+        document.getElementById('target_file').addEventListener('change', function() {
+            previewImage(this, 'target_preview');
+        });
+        // document.getElementById('background_file').addEventListener('change', function() {
+        //     previewImage(this, 'background_preview');
+        // });
+    </script>
+</body>
+</html>

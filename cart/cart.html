@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>장바구니</title>
+    <base href="http://goldsilk.metashopping.kr/goldGroup/" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="styles/cart.css" />
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <!-- Cart Container -->
+    <div class="cart-container">
+      <!-- Table Header -->
+      <div class="cart-header">
+        <div>이미지</div>
+        <div>상품정보</div>
+        <div>수량</div>
+        <div>상품구매금액</div>
+        <div>배송비</div>
+        <div>선택</div>
+      </div>
+
+      <!-- Items will be dynamically added by JavaScript -->
+      <div class="cart-items">
+        <p>장바구니가 비어 있습니다.</p>
+      </div>
+
+      <!-- Summary Section -->
+      <div class="cart-summary">
+        <div><span>총 상품 금액:</span> <span id="total-price">0 원</span></div>
+        <div><span>총 결제 금액:</span> <span id="final-price">0 원</span></div>
+        <button id="clear-cart-button">장바구니 비우기</button>
+      </div>
+    </div>
+
+    <footer-component></footer-component>
+    <script type="module" src="components/layout/layout.js"></script>
+
+    <script type="module" src="cart/cart.js"></script>
+  </body>
+</html>
