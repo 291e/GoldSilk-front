@@ -40,16 +40,19 @@ class WidgetComponent extends HTMLElement {
         const action = e.currentTarget.dataset.action;
         switch (action) {
           case "kakao":
-            alert("카카오톡 버튼 클릭");
+            window.open("https://open.kakao.com/o/s5zVFwEg", "_blank");
             break;
           case "instagram":
-            alert("인스타그램 버튼 클릭");
+            window.open("https://www.instagram.com/goldsilk_cd/", "_blank");
             break;
           case "blog":
-            alert("네이버 블로그 버튼 클릭");
+            window.open(
+              "https://blog.naver.com/goldsilkcd/223099795896",
+              "_blank"
+            );
             break;
           case "youtube":
-            alert("유튜브 버튼 클릭");
+            window.open("https://www.youtube.com/@goldsilk-np4md", "_blank");
             break;
           case "scroll-top":
             smoothScroll(0);

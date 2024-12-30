@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>주문 조회</title>
+    <link rel="stylesheet" href="./user.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <div class="order-history">
+      <h1>주문 내역</h1>
+      <div id="orders-container" class="orders-container">
+        <p>주문 내역을 불러오는 중...</p>
+      </div>
+    </div>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="/components/layout.js"></script>
+    <script src="./orderHistory.js" type="module"></script>
+  </body>
+</html>

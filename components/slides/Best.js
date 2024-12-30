@@ -63,7 +63,6 @@ class BestProductComponent extends HTMLElement {
           product.name || "상품 이미지"
         }" class="product-image" />
               <div class="hover-icons">
-                <i class="fa fa-heart wish-icon"></i>
                 <i class="fa-solid fa-cart-plus cart-icon" data-id="${
                   product.product_id
                 }"></i>

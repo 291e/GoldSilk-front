@@ -1,4 +1,4 @@
-import { registerUser, loginUser } from "../api/auth.js";
+import { registerUser, loginUser } from "../app/auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
           registerMessage.innerText =
             "회원가입 및 자동 로그인 성공! 메인 페이지로 이동합니다.";
           setTimeout(() => {
-            window.location.href = "http://goldsilk.metashopping.kr/goldGroup/";
+            window.location.href = "/";
           }, 1000);
         } else {
           registerMessage.innerText =

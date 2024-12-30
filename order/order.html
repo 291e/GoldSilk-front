@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>주문 상세 페이지</title>
+    <link rel="stylesheet" href="/styles/order.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <script
+      src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+      defer
+    ></script>
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <main>
+      <div class="order-container">
+        <h1>주문 상세 정보</h1>
+
+        <!-- 주문자 정보 -->
+        <section style="gap: 30px">
+          <h2>주문자 정보</h2>
+          <div class="orderer-container">
+            <label for="orderer-name">주문자</label>
+            <input type="text" id="orderer-name" readonly />
+          </div>
+          <div class="orderer-container">
+            <label for="orderer-email">이메일</label>
+            <input type="text" id="orderer-email" readonly />
+          </div>
+          <div class="orderer-container">
+            <label for="orderer-phone">전화번호</label>
+            <input type="text" id="orderer-phone" readonly />
+          </div>
+        </section>
+
+        <!-- 배송지 정보 -->
+        <section style="gap: 30px">
+          <h2>배송지 정보</h2>
+          <label>
+            <input type="checkbox" id="same-as-orderer" /> 주문자 정보와 동일
+          </label>
+
+          <div class="orderer-container">
+            <label for="recipient-name">받는 사람</label>
+            <input
+              type="text"
+              id="recipient-name"
+              placeholder="받는 사람 이름"
+            />
+          </div>
+
+          <div class="orderer-container">
+            <label for="postal-code">우편번호</label>
+            <input
+              type="text"
+              id="postal-code"
+              placeholder="우편번호"
+              readonly
+            />
+            <button id="search-address-button">주소 검색</button>
+          </div>
+
+          <div class="orderer-container">
+            <label for="shipping-address">주소</label>
+            <input type="text" id="shipping-address" placeholder="주소" />
+
+            <label for="detail-address" style="display: none"></label>
+            <input
+              type="text"
+              id="detail-address"
+              placeholder="상세 주소를 입력하세요"
+            />
+          </div>
+
+          <div class="orderer-container">
+            <label for="phone-number">전화번호</label>
+            <input type="text" id="phone-number" placeholder="전화번호" />
+          </div>
+
+          <div class="orderer-container">
+            <label for="message">요청사항</label>
+            <textarea
+              id="message"
+              placeholder="요청사항을 입력하세요"
+            ></textarea>
+          </div>
+        </section>
+
+        <!-- 상품 정보 -->
+        <section>
+          <h2>상품 정보</h2>
+          <div id="order-details"></div>
+          <h2>총 결제 금액</h2>
+          <p id="total-amount">0 원</p>
+        </section>
+
+        <section>
+          <h2>결제 정보</h2>
+
+          <button id="payment-button">결제하기</button>
+        </section>
+      </div>
+    </main>
+
+    <footer-component></footer-component>
+    <script type="module" src="/components/layout.js"></script>
+    <script type="module" src="./orderPage.js"></script>
+  </body>
+</html>

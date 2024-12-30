@@ -3,6 +3,7 @@ function initializeBrandPage() {
   const historyBtn = document.querySelector("#history-btn");
   const introContent = document.querySelector("#brand-intro");
   const historyContent = document.querySelector("#brand-history");
+  const map = document.querySelector(".map");
 
   if (!introBtn || !historyBtn || !introContent || !historyContent) {
     console.error("Brand page elements not found");
@@ -14,6 +15,7 @@ function initializeBrandPage() {
     historyBtn.classList.remove("active");
     introContent.classList.remove("hidden");
     historyContent.classList.add("hidden");
+    map.classList.remove("hidden");
   });
 
   historyBtn.addEventListener("click", () => {
@@ -21,6 +23,7 @@ function initializeBrandPage() {
     introBtn.classList.remove("active");
     historyContent.classList.remove("hidden");
     introContent.classList.add("hidden");
+    map.classList.add("hidden");
   });
 }
 

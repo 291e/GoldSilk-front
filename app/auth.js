@@ -1,5 +1,4 @@
-const API_BASE_URL = "https://goldsilkaws.metashopping.kr/"; // API 기본 URL
-const AUTH_URL = `${API_BASE_URL}/auth`; // 인증 관련 URL
+const AUTH_URL = "https://goldsilkaws.metashopping.kr/auth";
 
 // **회원가입**
 export async function registerUser(userData) {
@@ -8,7 +7,6 @@ export async function registerUser(userData) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "69420",
       },
       body: JSON.stringify(userData),
     });
@@ -31,7 +29,6 @@ export async function loginUser(credentials) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "69420",
       },
       body: JSON.stringify(credentials),
     });
@@ -64,7 +61,6 @@ export async function fetchUserProfile() {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "ngrok-skip-browser-warning": "69420",
       },
     });
 
@@ -106,7 +102,6 @@ export async function refreshAccessToken() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "69420",
       },
       body: JSON.stringify({ refresh_token: refreshToken }),
     });
@@ -133,7 +128,6 @@ export async function fetchWithToken(url, options = {}) {
     headers: {
       ...options.headers,
       Authorization: `Bearer ${token}`,
-      "ngrok-skip-browser-warning": "69420",
     },
   });
 
@@ -146,7 +140,6 @@ export async function fetchWithToken(url, options = {}) {
         headers: {
           ...options.headers,
           Authorization: `Bearer ${newToken}`,
-          "ngrok-skip-browser-warning": "69420",
         },
       });
     } catch (error) {

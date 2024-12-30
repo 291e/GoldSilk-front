@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "main": "index.html",
   "scripts": {
-    "build": "parcel build index.html --no-scope-hoist",
+    "build": "parcel build toss/payment.html",
     "start": "parcel index.html"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tosspayments/tosspayments-sdk": "^2.3.4",
     "parcel-bundler": "^1.12.5"
   }
 }

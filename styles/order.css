@@ -1,0 +1,184 @@
+/* 기본 스타일 */
+body {
+  font-family: "Montserrat", "Noto Sans KR", sans-serif !important;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f8f8;
+}
+
+.order-container {
+  max-width: 800px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 제목 스타일 */
+h1 {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 5px;
+  color: #333;
+}
+
+/* 주문자 정보, 배송지 정보 섹션 */
+section {
+  display: flex;
+  flex-direction: column;
+}
+
+.orderer-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  min-width: 100px;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+  height: 80px;
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* 주소 검색 버튼 */
+#search-address-button {
+  display: flex;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 9.5px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+}
+
+#search-address-button:hover {
+  background-color: #218838;
+}
+
+/* 주문 상품 섹션 */
+.order-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 10px;
+}
+
+.order-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.order-info {
+  flex: 1;
+}
+
+.item-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.item-quantity,
+.item-price {
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* 주문 요약 섹션 */
+.order-summary {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.order-summary h2 {
+  margin-bottom: 10px;
+  font-size: 1.4em;
+  color: #444;
+}
+
+#total-amount {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #007bff;
+}
+
+#payment-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#payment-button:hover {
+  background-color: #0056b3;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .order-container {
+    padding: 15px;
+  }
+
+  h1,
+  h2 {
+    font-size: 1.4em;
+  }
+
+  #search-address-button,
+  #payment-button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  input[type="text"],
+  textarea {
+    font-size: 0.9em;
+  }
+
+  .order-item img {
+    width: 60px;
+    height: 60px;
+  }
+}

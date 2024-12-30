@@ -122,19 +122,18 @@ header-component {
   border-bottom: 1px solid #ddd;
 }
 
+.headerRelative {
+  position: relative;
+  animation: slideDown 0.6s ease forwards;
+}
+
 /* 스크롤 시 고정 헤더 스타일 */
 .headerFixed {
   background-color: #fff;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   animation: slideDown 0.6s ease forwards;
-}
-
-.headerPlace {
-  position: relative;
-}
-
-.headerPlaceFixed {
   position: fixed;
+  top: 0;
 }
 
 /* 애니메이션 */
@@ -879,6 +878,7 @@ ad-banner-component {
 /* Swiper Wrapper */
 .ad-banner-swiper .swiper-wrapper {
   display: flex;
+  align-items: center;
 }
 
 /* Swiper 슬라이드 */
@@ -1021,5 +1021,15 @@ ad-banner-component {
 
   .user-icon {
     display: none;
+  }
+
+  .headerFixed {
+    width: 100%;
+  }
+  .header {
+    padding: 0;
+  }
+  .inner {
+    padding: 0 10px;
   }
 }

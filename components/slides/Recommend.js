@@ -85,6 +85,11 @@ class RecommendComponent extends HTMLElement {
                           .join("") || ""
                       }
                     </div>
+                      <div class="hover-icons">
+                        <i class="fa-solid fa-cart-plus cart-icon" data-id="${
+                          product.product_id
+                        }"></i>
+                    </div>
                   </div>
                 </div>
               </div>

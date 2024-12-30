@@ -36,13 +36,16 @@
       <div class="cart-summary">
         <div><span>총 상품 금액:</span> <span id="total-price">0 원</span></div>
         <div><span>총 결제 금액:</span> <span id="final-price">0 원</span></div>
-        <button id="clear-cart-button">장바구니 비우기</button>
+        <div class="cart-btn">
+          <button id="clear-cart-button">장바구니 비우기</button>
+          <button id="payment-button">결제하기</button>
+        </div>
       </div>
     </div>
 
     <footer-component></footer-component>
-    <script type="module" src="/components/layout/layout.js"></script>
+    <script type="module" src="/components/layout.js"></script>
 
-    <script type="module" src="/cart/cart.js"></script>
+    <script type="module" src="/Cart/cart.js"></script>
   </body>
 </html>

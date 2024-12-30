@@ -1,4 +1,4 @@
-import { fetchProducts } from "../app/api.js"; // JSON 데이터를 가져오는 API 함수
+import { fetchProducts, addToCart } from "../app/api.js"; // JSON 데이터를 가져오는 API 함수
 import { formatImagePath } from "../components/utils/image.js";
 
 class HanbokComponent extends HTMLElement {
@@ -12,23 +12,18 @@ class HanbokComponent extends HTMLElement {
   }
 
   async connectedCallback() {
-    // 현재 카테고리 가져오기 (HTML 속성에서 추출)
     this.category = this.getAttribute("data-category") || "혼주";
     this.title = this.getAttribute("data-title") || `${this.category} 한복`;
 
     try {
-      // 데이터 가져오기
       const allProducts = await fetchProducts();
-
-      // 변경된 API 구조에 맞춰 카테고리 필터링
       this.products = allProducts.filter(
         (product) =>
           product.category?.trim().toLowerCase() ===
           this.category.trim().toLowerCase()
       );
 
-      await this.render(); // 렌더링 (비동기 이미지 처리)
-      this.addEventListeners();
+      await this.render();
     } catch (error) {
       console.error("Failed to load products:", error);
       this.innerHTML = `<p>상품 데이터를 불러오는 데 실패했습니다.</p>`;
@@ -42,7 +37,6 @@ class HanbokComponent extends HTMLElement {
 
     this.innerHTML = `
       <div class="hanbok-container">
-        <!-- 제목 -->
         <div class="hanbok-header">
           <h1 class="hanbok-title">${this.title}</h1>
           <div class="hanbok-controls">
@@ -60,22 +54,19 @@ class HanbokComponent extends HTMLElement {
           </div>
         </div>
 
-        <!-- 분리선 -->
         <hr class="divider" />
 
-        <!-- 상품 리스트 -->
         <div class="product-grid">
           ${await this.renderProducts(paginatedProducts)}
         </div>
 
-        <!-- 페이지네이션 -->
         <div class="pagination-hanbok">
           ${this.renderPagination()}
         </div>
       </div>
     `;
 
-    this.addEventListeners(); // 렌더링 후 이벤트 리스너 추가
+    this.addEventListeners();
   }
 
   async renderProducts(products) {
@@ -83,7 +74,6 @@ class HanbokComponent extends HTMLElement {
       return `<p>등록된 제품이 없습니다.</p>`;
     }
 
-    // 비동기적으로 이미지 경로 처리
     const renderedProducts = await Promise.all(
       products.map(async (product) => {
         const imagePath = await formatImagePath(product.images?.[0]);
@@ -134,14 +124,12 @@ class HanbokComponent extends HTMLElement {
   }
 
   addEventListeners() {
-    // 필터 이벤트
     const filterSelect = this.querySelector("#filter-select");
     filterSelect.addEventListener("change", (e) => {
       const filterValue = e.target.value;
       this.applyFilter(filterValue);
     });
 
-    // 페이지네이션 이벤트
     const paginationButtons = this.querySelectorAll(".pagination-btn");
     paginationButtons.forEach((button) => {
       button.addEventListener("click", (e) => {
@@ -150,13 +138,24 @@ class HanbokComponent extends HTMLElement {
       });
     });
 
-    // 상품 클릭 이벤트
-    const productCards = this.querySelectorAll(".product-card");
-    productCards.forEach((card, index) => {
-      card.addEventListener("click", () => {
-        const start = (this.currentPage - 1) * this.itemsPerPage;
-        const productId = this.products[start + index].product_id;
-        window.location.href = `product.html?product_id=${productId}`;
+    const cartIcons = this.querySelectorAll(".cart-icon");
+    cartIcons.forEach((cartIcon) => {
+      cartIcon.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const productId = e.currentTarget.dataset.id;
+
+        if (!productId) {
+          alert("상품 정보를 찾을 수 없습니다.");
+          return;
+        }
+
+        try {
+          await addToCart(productId, 1);
+          alert("장바구니에 상품이 추가되었습니다!");
+        } catch (error) {
+          console.error("Error adding to cart:", error.message);
+          alert("장바구니 추가 중 오류가 발생했습니다.");
+        }
       });
     });
   }
@@ -187,19 +186,19 @@ class HanbokComponent extends HTMLElement {
   applyFilter(filter) {
     switch (filter) {
       case "new":
-        this.products.sort((a, b) => b.product_id - a.product_id); // 신상품 순
+        this.products.sort((a, b) => b.product_id - a.product_id);
         break;
       case "name":
-        this.products.sort((a, b) => a.name.localeCompare(b.name)); // 이름 순
+        this.products.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case "low-price":
-        this.products.sort((a, b) => a.price - b.price); // 낮은 가격 순
+        this.products.sort((a, b) => a.price - b.price);
         break;
       case "high-price":
-        this.products.sort((a, b) => b.price - a.price); // 높은 가격 순
+        this.products.sort((a, b) => b.price - a.price);
         break;
     }
-    this.currentPage = 1; // 필터 적용 시 첫 페이지로 이동
+    this.currentPage = 1;
     this.render();
   }
 }

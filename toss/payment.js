@@ -1,75 +1,68 @@
-import "./style.css";
-import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
+import { fetchOrderDetails } from "../app/order.js"; // 주문 정보 API
+import { confirmPayment } from "../app/payment.js"; // 결제 확인 API
 
-const amount = {
-  currency: "KRW",
-  value: 50_000,
-};
+// DOM 요소 가져오기
+const paymentRequestButton = document.getElementById("payment-request-button");
 
-const main = async () => {
-  const tossPayments = await loadTossPayments(
-    "test_ck_DnyRpQWGrNbdwvRLRnqLrKwv1M9E"
-  );
-  const widgets = tossPayments.widgets({
-    customerKey: ANONYMOUS,
-  });
+let orderDetails = {}; // 주문 정보를 저장할 객체
 
-  /**
-   * 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
-   * renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
-   * @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
-   */
-  await widgets.setAmount(amount);
-
-  await Promise.all([
-    /**
-     * 결제창을 렌더링합니다.
-     * @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
-     */
-    widgets.renderPaymentMethods({
-      selector: "#payment-method",
-      // 렌더링하고 싶은 결제 UI의 variantKey
-      // 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
-      // @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
-      variantKey: "DEFAULT",
-    }),
-    /**
-     * 약관을 렌더링합니다.
-     * @docs https://docs.tosspayments.com/reference/widget-sdk#renderagreement선택자-옵션
-     */
-    widgets.renderAgreement({
-      selector: "#agreement",
-      variantKey: "AGREEMENT",
-    }),
-  ]);
-
-  const paymentRequestButton = document.getElementById(
-    "payment-request-button"
-  );
-
-  paymentRequestButton.addEventListener("click", async () => {
-    try {
-      /**
-       * 결제 요청
-       * 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
-       * 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
-       * @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
-       */
-      await widgets.requestPayment({
-        orderId: generateRandomString(),
-        orderName: "토스 티셔츠 외 2건",
-        successUrl: window.location.origin + "/sandbox/success",
-        failUrl: window.location.origin + "/sandbox/fail",
-        customerEmail: "customer123@gmail.com",
-        customerName: "김토스",
-        customerMobilePhone: "01012341234",
-      });
-    } catch (err) {
-      // TODO: 에러 처리
+// 주문 상세 정보 로드
+async function loadOrderDetails(orderId) {
+  try {
+    const order = await fetchOrderDetails(orderId);
+    if (!order) {
+      throw new Error("주문 정보를 가져올 수 없습니다.");
     }
+    orderDetails = order;
+    setupTossPayment(orderDetails);
+  } catch (error) {
+    console.error("주문 상세 정보 로드 실패:", error.message);
+    alert("주문 정보를 불러오는 중 문제가 발생했습니다.");
+    window.location.href = "/order/order.html"; // 실패 시 주문 페이지로 리디렉션
+  }
+}
+
+// 토스 결제 위젯 설정
+function setupTossPayment({ order_id, total_amount }) {
+  const tossPayments = TossPayments("test_ck_DnyRpQWGrNbdwvRLRnqLrKwv1M9E");
+
+  paymentRequestButton.addEventListener("click", () => {
+    tossPayments
+      .requestPayment("카드", {
+        amount: total_amount,
+        orderId: order_id,
+        orderName: "주문상품",
+        successUrl: `${window.location.origin}/payment/success?orderId=${order_id}&amount=${total_amount}`,
+        failUrl: `${window.location.origin}/payment/fail?orderId=${order_id}`,
+      })
+      .catch((error) => {
+        console.error("결제 요청 실패:", error.message);
+        alert("결제 요청 중 문제가 발생했습니다.");
+      });
   });
-};
+}
 
-main();
+// 결제 성공 확인
+async function handlePaymentSuccess(paymentKey, orderId, amount) {
+  try {
+    const response = await confirmPayment(paymentKey, orderId, amount);
+    if (!response) {
+      throw new Error("결제 확인 실패");
+    }
+    alert("결제가 성공적으로 완료되었습니다.");
+    window.location.href = `/order/completed.html?orderId=${orderId}`;
+  } catch (error) {
+    console.error("결제 확인 오류:", error.message);
+    alert("결제 확인 중 문제가 발생했습니다.");
+  }
+}
 
-const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
+// URL에서 orderId 추출
+const urlParams = new URLSearchParams(window.location.search);
+const orderId = urlParams.get("orderId");
+if (!orderId) {
+  alert("주문 정보가 없습니다.");
+  window.location.href = "/cart/cart.html"; // 주문 정보 없으면 장바구니로 리디렉션
+} else {
+  loadOrderDetails(orderId);
+}

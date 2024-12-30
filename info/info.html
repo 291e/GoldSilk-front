@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>황금단 - 전통과 현대의 조화를 이루는 한복 전문 쇼핑몰</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/page.css" />
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <main>
+      <div class="brand-page">
+        <!-- 상단 이미지와 텍스트 -->
+        <div class="brand-banner">
+          <img class="brand-image" src="/public/pages/brand/brand_top2.jpg" />
+          <div class="brand-banner-text">
+            <span>(주)황금단</span>
+            <div class="line-bar"></div>
+            <span>한복을 디자인하는 전문기업</span>
+            <span
+              >저희 황금단은 우리나라의 소중한 전통문화인 한복을 전문으로
+              제작하는 회사로,<br />
+              “한복을 디자인하는 전문기업” 으로 한국의 아름다움을 전 세계에
+              알리고자 하는 열정으로 가득 차 있습니다.</span
+            >
+          </div>
+        </div>
+
+        <!-- 메뉴 버튼 -->
+        <div class="brand-menu">
+          <button id="intro-btn" class="menu-btn active" data-section="intro">
+            한복맞춤안내
+          </button>
+          <button id="wear-btn" class="menu-btn" data-section="wear">
+            한복입어보기
+          </button>
+          <button id="measure-btn" class="menu-btn" data-section="measure">
+            한복치수재기
+          </button>
+        </div>
+
+        <!-- 한복맞춤안내 -->
+        <div id="intro" class="section active">
+          <img src="/public/pages/brand/info01.jpg" alt="Intro" />
+        </div>
+
+        <!-- 한복입어보기 -->
+        <div id="wear" class="section">
+          <img src="/public/pages/brand/info02.jpg" alt="Wear" />
+        </div>
+        <!-- 한복치수재기 -->
+        <div id="measure" class="section">
+          <img src="/public/pages/brand/info03.jpg" alt="Measure" />
+        </div>
+      </div>
+    </main>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="/components/layout.js"></script>
+    <script>
+      const menuButtons = document.querySelectorAll(".menu-btn");
+      const sections = document.querySelectorAll(".section");
+
+      function showSection(sectionId) {
+        sections.forEach((section) => {
+          section.classList.toggle("active", section.id === sectionId);
+        });
+        menuButtons.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.section === sectionId);
+        });
+      }
+
+      menuButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          showSection(button.dataset.section);
+        });
+      });
+
+      // URL 파라미터로 특정 섹션 표시
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetSection = urlParams.get("section");
+      if (targetSection) {
+        showSection(targetSection);
+      }
+    </script>
+  </body>
+</html>

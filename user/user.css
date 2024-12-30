@@ -214,3 +214,45 @@ input[type="checkbox"] {
 .logout-button:hover {
   background-color: #e60000;
 }
+
+/* 주문조회 */
+
+.order-history {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.order-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.order-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-right: 16px;
+}
+
+.order-item-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  font-weight: bold;
+}
+
+.item-price {
+  color: #333;
+}

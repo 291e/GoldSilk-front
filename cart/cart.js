@@ -1,17 +1,19 @@
 import {
   fetchCart,
-  addToCart,
   deleteCartItem,
   updateCartItem,
   clearCart,
-} from "../api/api.js";
+} from "../app/api.js";
 import { formatImagePath } from "../components/utils/image.js";
+import { createOrder } from "../app/order.js";
+import { fetchUserProfile } from "../app/auth.js"; // 사용자 정보 가져오기
 
 // DOM 요소 가져오기
 const cartContainer = document.querySelector(".cart-items");
 const totalPriceEl = document.getElementById("total-price");
 const finalPriceEl = document.getElementById("final-price");
 const clearCartButton = document.getElementById("clear-cart-button");
+const paymentButton = document.getElementById("payment-button");
 
 // 장바구니 렌더링 함수
 async function renderCart() {
@@ -54,9 +56,6 @@ async function renderCart() {
           <div>${(item.price * item.quantity).toLocaleString()} 원</div>
           <div>무료</div>
           <div class="cart-btn">
-            <button class="order-btn" data-id="${
-              item.cart_id
-            }">주문하기</button>
             <button class="delete-btn" data-id="${item.cart_id}">삭제</button>
           </div>
         </div>
@@ -124,6 +123,62 @@ clearCartButton.addEventListener("click", async () => {
       console.error("장바구니 비우기 오류:", error.message);
       alert("장바구니 비우기 중 문제가 발생했습니다.");
     }
+  }
+});
+
+// 결제하기 버튼 클릭 시
+paymentButton.addEventListener("click", async () => {
+  try {
+    const cartItems = await fetchCart();
+
+    if (cartItems.length === 0) {
+      alert("장바구니에 상품이 없습니다.");
+      return;
+    }
+
+    // 사용자 정보 가져오기
+    const user = await fetchUserProfile();
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "/user/login.html"; // 로그인 페이지로 리디렉션
+      return;
+    }
+
+    const userId = user.user_id; // 사용자 ID
+
+    // 주문 생성 데이터 준비
+    const totalAmount = cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+
+    const newOrder = {
+      user_id: userId, // 로그인된 사용자 ID 사용
+      total_amount: totalAmount,
+      shipping_address: "", // 배송 주소 초기화
+      recipient_name: "", // 수령인 이름 초기화
+      phone_number: "", // 전화번호 초기화
+      message: "", // 요청 사항 초기화
+      cart_items: cartItems.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    };
+
+    console.log("Creating order with data:", newOrder);
+
+    const createdOrder = await createOrder(newOrder);
+
+    if (!createdOrder) {
+      throw new Error("주문 생성 실패");
+    }
+
+    alert("주문이 생성되었습니다. 결제를 진행하세요.");
+    window.location.href = `/order/order.html?orderId=${createdOrder.order_id}`;
+  } catch (error) {
+    console.error("결제 처리 중 오류:", error.message);
+    alert("결제 처리 중 문제가 발생했습니다.");
   }
 });
 

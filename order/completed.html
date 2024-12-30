@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="icon"
+      href="https://static.toss.im/icons/png/4x/icon-toss-logo.png"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>주문 완료</title>
+
+    <link rel="stylesheet" href="/styles/payment.css" />
+  </head>
+
+  <body>
+    <div class="wrapper w-100">
+      <div class="flex-column align-center w-100 max-w-540">
+        <img
+          src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png"
+          width="160"
+          height="160"
+          alt="주문 완료 이미지"
+        />
+        <h2 class="title">주문이 성공적으로 완료되었습니다!</h2>
+        <div class="response-section w-100">
+          <div class="flex justify-between">
+            <span class="response-label">결제 금액</span>
+            <span id="total-amount" class="response-text"></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="response-label">주문번호</span>
+            <span id="order-id" class="response-text"></span>
+          </div>
+        </div>
+        <div class="w-100 button-group">
+          <a class="btn primary w-100" href="/">홈으로 이동</a>
+          <a
+            class="btn w-100"
+            href="/order/details.html?orderId="
+            id="view-order-btn"
+            >주문 상세보기</a
+          >
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./completed.js"></script>
+  </body>
+</html>

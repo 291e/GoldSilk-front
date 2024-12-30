@@ -1,4 +1,4 @@
-import { loginUser, fetchUserProfile } from "../api/auth.js";
+import { loginUser, fetchUserProfile } from "../app/auth.js";
 
 // DOM이 로드된 후 실행
 document.addEventListener("DOMContentLoaded", () => {
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         setTimeout(() => {
-          window.location.href = "http://goldsilk.metashopping.kr/goldGroup/";
+          window.location.href = "/";
         }, 1000);
       } else {
         loginMessage.innerText =

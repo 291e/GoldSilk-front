@@ -1,4 +1,4 @@
-import { fetchProductById } from "./app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
+import { fetchProductById, addToCart } from "./app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
 import { formatImagePath } from "./components/utils/image.js";
 
 // URL에서 상품 ID 가져오기
@@ -32,6 +32,24 @@ async function renderProduct(product) {
     product.name
   }" class="product-image">
         </div>
+            <div class="label-upload">
+              <label for="face-input" class="upload-label">
+                <div class="upload-ui">
+                  <img id="upload-icon" src="public/Vector.png" alt="upload">
+                  <span id="upload-text">얼굴 이미지</span>
+                </div>
+              </label>
+              <input type="file" id="face-input" accept="image/*">
+              <div class="generate">
+                <button id="generate-button" class="generate-btn">AI로 한복 입어보기</button>
+                <div class="meta-style">
+                <a href="https://www.metabank3d.com/" target="_blink">
+                  <img src="public/metaStyle.png" alt="메타스타일링">
+                </a>
+                </div>
+                
+              </div>
+            </div>
         <div class="thumbnail-wrapper">
         ${
           formattedImages
@@ -70,34 +88,16 @@ async function renderProduct(product) {
         <div class="line-bar-product"></div>
         <span class="product-total">총 상품금액(수량): ${product.price.toLocaleString()}원 (1개)</span>
         <div class="product-buttons">
-          <button class="buy-now">Buy Now</button>
           <button class="cart" data-product-id="${
             product.product_id
           }">Cart</button>
-          <button class="wish">Wish</button>
         </div>
 
+        
         <!-- 라벨 업로드 및 결과물 -->
         <div class="label-result-section">
           <div class="upload-flex">
-            <div class="label-upload">
-              <label for="face-input" class="upload-label">
-                <div class="upload-ui">
-                  <img id="upload-icon" src="public/Vector.png" alt="upload">
-                  <span id="upload-text">얼굴 이미지</span>
-                </div>
-              </label>
-              <input type="file" id="face-input" accept="image/*">
-              <div class="generate">
-                <button id="generate-button" class="generate-btn">AI로 한복 입어보기</button>
-                <div class="meta-style">
-                <a href="https://www.metabank3d.com/" target="_blink">
-                  <img src="public/metaStyle.png" alt="메타스타일링">
-                </a>
-                </div>
-                
-              </div>
-            </div>
+
             <div class="result-image">
               <span id="result-text">AI 결과 이미지</span>
               <img id="generated-image" src="" alt="Generated Result" style="display: none; width: 300px; height: auto;">
@@ -166,7 +166,7 @@ async function renderProduct(product) {
       </ul>
 
       <h3>[ 서비스문의 ]</h3>
-      <p>문의는 010-4065-1004 로 연락주세요.</p>
+      <p>문의는 042-385-1008 로 연락주세요.</p>
 
     </div>
   </div>
@@ -187,6 +187,26 @@ async function renderProduct(product) {
   `;
 }
 
+// 수량 변경 이벤트
+function setupQuantityEvent(product) {
+  const quantityInput = productPage.querySelector("#quantity");
+  const totalPrice = productPage.querySelector(".product-total");
+  const totalNum = productPage.querySelector(".total");
+
+  if (!quantityInput || !totalPrice || !totalNum) return;
+
+  quantityInput.addEventListener("input", (e) => {
+    const quantity = Math.max(1, parseInt(e.target.value, 10) || 1);
+    e.target.value = quantity;
+
+    // 상품 가격을 기반으로 총 가격 계산
+    totalPrice.textContent = `총 상품금액(수량): ${(
+      product.price * quantity
+    ).toLocaleString()}원 (${quantity}개)`;
+    totalNum.textContent = `${(product.price * quantity).toLocaleString()}원`;
+  });
+}
+
 async function initializeProductPage() {
   try {
     const product = await fetchProductById(productId); // fetchProductById로 상품 데이터 가져오기
@@ -198,6 +218,7 @@ async function initializeProductPage() {
       addScrollMenu();
       // 이벤트 추가
       setupEventListeners(product);
+      setupQuantityEvent(product); // 수량 이벤트 초기화
       // 요소 선택
       const thumbnails = productPage.querySelectorAll(".thumbnail");
       const mainImage = productPage.querySelector(".product-image");
@@ -205,6 +226,7 @@ async function initializeProductPage() {
       const generateButton = productPage.querySelector("#generate-button");
       const resultImage = document.querySelector("#generated-image");
       const resultImageContainer = document.querySelector(".result-image");
+      const uploadUi = document.querySelector(".upload-ui");
 
       // 로딩 애니메이션 요소
       const loadingAnimation = document.createElement("div");
@@ -220,7 +242,8 @@ async function initializeProductPage() {
   transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
-  padding: 20px;
+  flex-direction: column;
+  font-size: 13px;
   text-align: center;
   z-index: 9999;
   display: none; 
@@ -228,8 +251,8 @@ async function initializeProductPage() {
   height:100%;
 `;
       // 로딩 애니메이션을 result-image 내부에 추가
-      resultImageContainer.style.position = "relative"; // 부모 요소에 상대 위치 지정
-      resultImageContainer.appendChild(loadingAnimation);
+      uploadUi.style.position = "relative"; // 부모 요소에 상대 위치 지정
+      uploadUi.appendChild(loadingAnimation);
       // // 썸네일 클릭 이벤트
       // thumbnails.forEach((thumbnail, index) => {
       //   thumbnail.addEventListener("click", () => {
@@ -270,7 +293,6 @@ async function initializeProductPage() {
           let mainImageResult = null;
           const response = await fetch(mainImage.src, {
             method: "GET",
-            headers: { "ngrok-skip-browser-warning": "69420" },
           });
 
           if (!response.ok) {
@@ -286,7 +308,7 @@ async function initializeProductPage() {
           formData.append("target_file", targetFile);
 
           const serverResponse = await fetch(
-            "http://110.10.182.81:5001/run_workflow/face_swap",
+            "https://goldsilkaws.metashopping.kr/face",
             { method: "POST", body: formData }
           );
 
@@ -315,7 +337,6 @@ async function initializeProductPage() {
             // 디테일 이미지 합성
             const detailResponse = await fetch(detailImageSrc, {
               method: "GET",
-              headers: { "ngrok-skip-browser-warning": "69420" },
             });
 
             if (!detailResponse.ok) {
@@ -335,7 +356,7 @@ async function initializeProductPage() {
             formData.append("detail_target_file", detailTargetFile);
 
             const detailServerResponse = await fetch(
-              "http://110.10.182.81:5001/run_workflow/face_swap",
+              "https://goldsilkaws.metashopping.kr/face",
               { method: "POST", body: formData }
             );
 
@@ -358,21 +379,6 @@ async function initializeProductPage() {
           // 로딩 애니메이션 종료
           loadingAnimation.style.display = "none";
         }
-      });
-
-      // 수량 변경 이벤트
-      const quantityInput = productPage.querySelector("#quantity");
-      const totalPrice = productPage.querySelector(".product-total");
-      const totalNum = productPage.querySelector(".total");
-      quantityInput.addEventListener("input", (e) => {
-        const quantity = Math.max(1, parseInt(e.target.value, 10) || 1);
-        e.target.value = quantity;
-        totalPrice.textContent = `총 상품금액(수량): ${(
-          product.price * quantity
-        ).toLocaleString()}원 (${quantity}개)`;
-        totalNum.textContent = `${(
-          product.price * quantity
-        ).toLocaleString()}원`;
       });
 
       // 파일 업로드 및 미리보기
@@ -399,15 +405,28 @@ async function initializeProductPage() {
     console.error("Failed to load product:", error);
     productPage.innerHTML = `<p>상품 데이터를 불러오는 데 실패했습니다.</p>`;
   }
+
   function setupEventListeners(product) {
     const cartButton = document.querySelector(".cart");
-    cartButton.addEventListener("click", async () => {
+    cartButton?.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const productId = product.product_id;
+
+      if (!productId) {
+        alert("유효하지 않은 상품입니다.");
+        return;
+      }
+
       try {
-        const response = await addToCart(product.product_id, 1);
-        alert("장바구니에 상품이 추가되었습니다.");
+        const result = await addToCart(productId, 1);
+
+        if (result) {
+          alert("장바구니에 상품이 추가되었습니다!");
+        }
       } catch (error) {
         console.error("Error adding to cart:", error.message);
-        alert("장바구니 추가에 실패했습니다.");
+        alert("장바구니 추가 중 오류가 발생했습니다.");
       }
     });
   }

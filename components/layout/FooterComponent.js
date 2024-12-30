@@ -12,14 +12,15 @@ class FooterComponent extends HTMLElement {
                       <span>Add : 14055 경기도 안양시 동안구 시민대로327번길 11-41 9층 909호</span>
                       <span>Add : 06065 서울 강남구 선릉로134길 6 1층 (서울본점-전시장)</span>
                       <span>Cpo_email : 강영기(goldsilkcop@gmail.com) Hosting by CAFE24</span>
-                      <span>Copyright © 황금단. All rights reserved. 디자인저작권자:위스킨</span>
-                    </div>
+                      <span>Copyright © 황금단. All rights reserved.</span>
+                      <span>Technical support © ㈜메타뱅크. All rights reserved.</span>
+                      </div>
                   </div>
                   <div class="footer-container">
                     <span>BANK ACCOUNT</span>
                     <div class="footer-menu">
-                      <span>하나은행 : 404-910019-20304</span>
-                      <span>예금주 : 주식회사황금단</span>
+                      <span>하나은행 : 659-910043-17104</span>
+                      <span>예금주 : 주식회사메타뱅크</span>
                     </div>
                   </div>
                   <div class="footer-container">
