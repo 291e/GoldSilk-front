@@ -1,4 +1,4 @@
-import { fetchUserProfile } from "../../app/auth.js";
+import { fetchUserProfile } from "../../services/auth.js";
 
 class HeaderComponent extends HTMLElement {
   async connectedCallback() {

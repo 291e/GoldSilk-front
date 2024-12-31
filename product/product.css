@@ -18,6 +18,9 @@ hanbok-component {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 1480px;
+  margin: 0 auto;
 }
 
 .hanbok-header {
