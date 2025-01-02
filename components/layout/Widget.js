@@ -73,7 +73,7 @@ class WidgetComponent extends HTMLElement {
 
     const updateWidgetVisibility = () => {
       if (!isScrolling) {
-        if (window.scrollY > 100) {
+        if (window.scrollY > 0) {
           if (!widgetVisible) {
             widget.style.display = "flex"; // 위젯 표시
             widgetVisible = true;

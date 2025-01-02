@@ -41,10 +41,10 @@ async function renderProduct(product) {
               </label>
               <input type="file" id="face-input" accept="image/*">
               <div class="generate">
-                <button id="generate-button" class="generate-btn">AI로 한복 입어보기</button>
+                <button id="generate-button" class="generate-btn"><span style="font-weight:600">AI</span> 한복 입어보기</button>
                 <div class="meta-style">
                 <a href="https://www.metabank3d.com/" target="_blink">
-                  <img src="public/metaStyle.png" alt="메타스타일링">
+                  <img style="scale:0.9" src="public/metaStyle.png" alt="메타스타일링">
                 </a>
                 </div>
                 
@@ -90,7 +90,10 @@ async function renderProduct(product) {
         <div class="product-buttons">
           <button class="cart" data-product-id="${
             product.product_id
-          }">Cart</button>
+          }"><i class="fa-solid fa-cart-plus"></i></button>
+          <button class="wish" data-product-id="${
+            product.product_id
+          }"><i class="fa-regular fa-heart"></i></button>
         </div>
 
         
@@ -114,11 +117,14 @@ async function renderProduct(product) {
   <div id="detail-section" class="content-section" data-section="Detail">
     <div class="detail-image">
     ${
-      formattedDetailImages
+      formattedImages
         .map(
-          (img) => `<img src="${img}" alt="디테일 이미지" class="detail-img">`
+          (img, index) =>
+            `<img src="${img}" alt="Thumbnail ${index + 1}" class="thumbnail ${
+              index === 0 ? "active" : ""
+            }">`
         )
-        .join("") || "<p>디테일 이미지가 없습니다.</p>"
+        .join("") || "<p>썸네일 이미지가 없습니다.</p>"
     }
     </div>
   </div>
@@ -241,7 +247,7 @@ async function initializeProductPage() {
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
+  border-radius: 4px;
   flex-direction: column;
   font-size: 13px;
   text-align: center;

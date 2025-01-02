@@ -1,4 +1,4 @@
-import { registerUser, loginUser } from "../app/auth.js";
+import { registerUser, loginUser } from "../services/userService.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
@@ -36,10 +36,23 @@ document.addEventListener("DOMContentLoaded", () => {
     return termsCheckbox.checked && privacyCheckbox.checked;
   }
 
+  // 휴대전화 유효성 검사
+  function isValidPhone(phonePart2, phonePart3) {
+    const phoneRegex = /^\d{4}$/;
+    return phoneRegex.test(phonePart2) && phoneRegex.test(phonePart3);
+  }
+
+  // 비밀번호 유효성 검사
+  function isValidPassword(password) {
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    return passwordRegex.test(password);
+  }
+
+  // 회원가입 처리
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // 입력값 가져오기
     const username = document.getElementById("registerUsername").value.trim();
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value.trim();
@@ -47,66 +60,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const phonePart2 = document.getElementById("phonePart2").value.trim();
     const phonePart3 = document.getElementById("phonePart3").value.trim();
 
-    // 필수 체크박스 확인
-    if (!areRequiredCheckboxesChecked()) {
-      registerMessage.innerText =
-        "필수 항목에 모두 동의해야 회원가입이 가능합니다.";
-      return;
-    }
-
-    // 휴대전화 유효성 검사 (4자리 숫자)
-    const phoneRegex = /^\d{4}$/;
-    if (!phoneRegex.test(phonePart2) || !phoneRegex.test(phonePart3)) {
-      registerMessage.innerText = "휴대전화는 4자리 숫자만 입력해주세요.";
-      return;
-    }
-
-    // 최종 휴대전화 번호 조합
     const phone = `${phonePart1}-${phonePart2}-${phonePart3}`;
 
-    // 비밀번호 유효성 검사
-    const passwordRegex =
-      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      registerMessage.innerText =
-        "비밀번호는 8자 이상, 영문+숫자+특수문자 조합이어야 합니다.";
+    console.log("Form Data:", { username, email, password, phone });
+
+    if (!areRequiredCheckboxesChecked()) {
+      registerMessage.innerText = "필수 항목에 동의해주세요.";
       return;
     }
 
     try {
-      // 회원가입 요청
-      const result = await registerUser({
-        username,
-        email,
-        password,
-        phone,
-      });
+      registerMessage.innerText = "회원가입 진행 중...";
+      const result = await registerUser({ username, email, password, phone });
+      console.log("Registration Success:", result);
 
       if (result) {
-        registerMessage.innerText = "회원가입이 성공적으로 완료되었습니다!";
-
-        // 자동 로그인 시도
+        registerMessage.innerText = "회원가입이 완료되었습니다.";
         const loginResult = await loginUser({ email, password });
         if (loginResult) {
-          localStorage.setItem("access_token", loginResult.access_token);
-          localStorage.setItem("refresh_token", loginResult.refresh_token);
-
-          registerMessage.innerText =
-            "회원가입 및 자동 로그인 성공! 메인 페이지로 이동합니다.";
+          registerMessage.innerText = "회원가입 및 로그인 성공!";
           setTimeout(() => {
             window.location.href = "/";
           }, 1000);
-        } else {
-          registerMessage.innerText =
-            "회원가입은 성공했지만 자동 로그인에 실패했습니다.";
         }
-      } else {
-        registerMessage.innerText =
-          "회원가입에 실패했습니다. 다시 시도해주세요.";
       }
     } catch (error) {
-      console.error("Error during registration and login:", error.message);
-      registerMessage.innerText = "오류가 발생했습니다. 다시 시도해주세요.";
+      console.error("Registration Error:", error.message);
+      registerMessage.innerText =
+        error.message || "회원가입 중 오류가 발생했습니다.";
     }
   });
 });

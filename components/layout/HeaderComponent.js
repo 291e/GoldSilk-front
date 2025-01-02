@@ -1,4 +1,5 @@
-import { fetchUserProfile } from "../../services/auth.js";
+import { getUserProfile } from "../../services/userService.js";
+import { getCartItems } from "../../services/cartService.js";
 
 class HeaderComponent extends HTMLElement {
   async connectedCallback() {
@@ -16,31 +17,55 @@ class HeaderComponent extends HTMLElement {
       { name: "COMMUNITY", link: "/Community/community.html" },
     ];
 
-    let profileLink = "/user/login.html"; // 기본 로그인 링크 설정
-    let cartLink = "/Cart/cart.html"; // 기본 장바구니 링크 설정
-    let isLoggedIn = false; // 로그인 여부
+    const token = localStorage.getItem("access_token");
+    const isLoggedIn = Boolean(token);
 
-    // 로그인 상태 확인
-    try {
-      const user = await fetchUserProfile();
-      if (user) {
-        profileLink = "/user/profile.html"; // 로그인된 경우 프로필 페이지
-        isLoggedIn = true;
+    let profileLink = "/user/login.html";
+    let cartLink = "/user/login.html";
+    let userName = "로그인";
+    let cartItemCount = 0;
+
+    if (isLoggedIn) {
+      try {
+        const user = await getUserProfile();
+        userName = user?.username || "사용자";
+
+        const cartItems = await getCartItems();
+        cartItemCount = cartItems.length;
+        profileLink = "/user/profile.html";
+        cartLink = "/Cart/cart.html";
+      } catch (error) {
+        console.error("Error loading user or cart data:", error.message);
       }
-    } catch (error) {
-      console.warn("User not logged in or session expired.");
     }
 
+    this.renderHeader(
+      menuItems,
+      profileLink,
+      cartLink,
+      isLoggedIn,
+      userName,
+      cartItemCount
+    );
+    this.addHamburgerMenuListeners();
+    this.addScrollListener();
+  }
+
+  renderHeader(
+    menuItems,
+    profileLink,
+    cartLink,
+    isLoggedIn,
+    userName,
+    cartItemCount
+  ) {
     this.innerHTML = `
       <div class="header-placeholder"></div>
       <div class="header headerRelative">
         <div class="inner">
-          <!-- 로고 -->
           <a href="/" class="logo-wrapper">
             <img src="/public/logo.jpg" alt="logo" class="logo" />
           </a>
-
-          <!-- 데스크톱 메뉴 -->
           <nav class="menu">
             ${menuItems
               .map(
@@ -49,34 +74,46 @@ class HeaderComponent extends HTMLElement {
               )
               .join("")}
           </nav>
-
-          <!-- 사용자 아이콘 -->
-          <a class="user-icon" href="${
-            isLoggedIn ? profileLink : "/user/login.html"
-          }">
+         <div class="user-text">
             ${
               isLoggedIn
-                ? '<i class="fa-regular fa-user"></i>'
-                : '<i class="fa-solid fa-user-plus"></i>'
+                ? `
+                  <a class="user-icon" href="${profileLink}">
+                    <i class="fa-regular fa-user"></i>
+                    <span class="user-name" style="font-size:14px; white-space:nowrap;">${userName}님</span>
+                  </a>
+                  <a class="user-icon cart-wrapper" href="${cartLink}">
+                    <i class="fa-solid fa-cart-shopping" style="position:relative;">
+                      ${
+                        cartItemCount > 0
+                          ? `<span class="cart-count">${cartItemCount}</span>`
+                          : ""
+                      }
+                    </i>
+                  </a>
+                `
+                : `
+                  <a class="user-icon" href="${profileLink}">
+                    <i class="fa-solid fa-user-plus"></i>
+                  </a>
+                  <a class="user-icon cart-wrapper" href="${cartLink}">
+                    <i class="fa-solid fa-cart-shopping" style="position:relative;">
+                      ${
+                        cartItemCount > 0
+                          ? `<span class="cart-count">${cartItemCount}</span>`
+                          : ""
+                      }
+                    </i>
+                  </a>
+                ` /* 비로그인 시 아무것도 표시하지 않음 */
             }
-          </a>
-
-          <!-- 장바구니 아이콘 -->
-          <a class="user-icon" href="${
-            isLoggedIn ? cartLink : "/user/login.html"
-          }">
-            <i class="fa-solid fa-cart-shopping"></i>
-          </a>
-
-          <!-- 햄버거 메뉴 -->
+          </div>
           <div class="hamburger-icon">
             <span></span>
             <span></span>
             <span></span>
           </div>
         </div>
-
-        <!-- 모바일 메뉴 -->
         <div class="mobile-menu">
           ${menuItems
             .map(
@@ -84,22 +121,13 @@ class HeaderComponent extends HTMLElement {
                 `<a href="${item.link}" class="mobile-menu-item">${item.name}</a>`
             )
             .join("")}
-          <a class="mobile-menu-item" href="${
-            isLoggedIn ? profileLink : "/user/login.html"
-          }">
-            ${isLoggedIn ? "Profile" : "Login"}
+          <a class="mobile-menu-item" href="${profileLink}">
+            ${isLoggedIn ? `Profile (${userName})` : "Login"}
           </a>
-          <a class="mobile-menu-item" href="${
-            isLoggedIn ? cartLink : "/user/login.html"
-          }">
-            장바구니
-          </a>
+          <a class="mobile-menu-item" href="${cartLink}">장바구니</a>
         </div>
       </div>
     `;
-
-    this.addScrollListener();
-    this.addHamburgerMenuListeners();
   }
 
   addHamburgerMenuListeners() {
@@ -108,19 +136,16 @@ class HeaderComponent extends HTMLElement {
 
     hamburgerIcon.addEventListener("click", () => {
       mobileMenu.classList.toggle("open");
-      if (mobileMenu.classList.contains("open")) {
-        mobileMenu.style.display = "flex"; // 메뉴가 펼쳐지도록 처리
-      } else {
-        mobileMenu.style.display = "none"; // 메뉴가 닫히도록 처리
-      }
+      mobileMenu.style.display = mobileMenu.classList.contains("open")
+        ? "flex"
+        : "none";
     });
 
-    // 메뉴 외부 클릭 시 메뉴 닫기
     document.addEventListener("click", (event) => {
-      const isClickInsideMenu =
+      const isClickInside =
         mobileMenu.contains(event.target) ||
         hamburgerIcon.contains(event.target);
-      if (!isClickInsideMenu) {
+      if (!isClickInside) {
         mobileMenu.classList.remove("open");
         mobileMenu.style.display = "none";
       }
@@ -139,10 +164,10 @@ class HeaderComponent extends HTMLElement {
     window.addEventListener("scroll", () => {
       if (window.scrollY > 80) {
         header.classList.add("headerFixed");
-        placeholder.style.height = `${header.offsetHeight}px`; // 헤더 높이를 유지하여 페이지 이동 방지
+        placeholder.style.height = `${header.offsetHeight}px`;
       } else {
         header.classList.remove("headerFixed");
-        placeholder.style.height = "0"; // 원래 상태로 복구
+        placeholder.style.height = "0";
       }
     });
   }

@@ -158,6 +158,16 @@ class HanbokComponent extends HTMLElement {
         }
       });
     });
+
+    const productCards = this.querySelectorAll(".product-card");
+    productCards.forEach((card) => {
+      card.addEventListener("click", (e) => {
+        const productId = e.currentTarget.dataset.id;
+        if (productId) {
+          window.location.href = `/product.html?product_id=${productId}`;
+        }
+      });
+    });
   }
 
   handlePagination(action) {

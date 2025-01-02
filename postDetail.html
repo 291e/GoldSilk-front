@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시물 상세보기</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/styles/community.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <main class="community-main">
+      <!-- 헤더 -->
+      <div class="community-header">
+        <span id="page-title">로딩 중...</span>
+      </div>
+
+      <!-- 게시물 상세 -->
+      <div class="community-detail">
+        <div class="post-detail">
+          <div class="post-meta-table">
+            <div>
+              <span class="meta-label">제목</span>
+              <span id="post-title">로딩 중...</span>
+            </div>
+            <div>
+              <span class="meta-label">작성자</span>
+              <span id="post-author">로딩 중...</span>
+            </div>
+            <div>
+              <div>
+                <span class="meta-label-2">작성일</span>
+                <span id="post-date">로딩 중...</span>
+              </div>
+              <div>
+                <span class="meta-label-2">조회수</span>
+                <span id="post-views">로딩 중...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 게시물 내용 -->
+          <div id="post-content" class="post-content">
+            <!-- 내용 -->
+          </div>
+
+          <!-- 목록 버튼 -->
+          <div class="post-navigation">
+            <button id="back-to-list">목록</button>
+          </div>
+
+          <!-- 댓글 섹션 -->
+          <div class="comment-section">
+            <h3>댓글</h3>
+            <div class="comment-table">
+              <div class="comment-header">
+                <span>작성자</span>
+                <span>댓글 내용</span>
+                <span>평점</span>
+                <span>작성일</span>
+              </div>
+              <div id="comment-list">
+                <!-- 댓글 리스트 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 다음글 -->
+          <div class="navigation-links">
+            <a id="prev-post-link" href="#">이전 글이 없습니다.</a>
+            <a id="next-post-link" href="#">다음 글이 없습니다.</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="/components/layout.js"></script>
+    <script type="module" src="/postDetail.js"></script>
+  </body>
+</html>

@@ -79,7 +79,7 @@ button {
   color: #fff;
   border: none;
   padding: 9.5px;
-  font-size: 0.9em;
+  font-size: 14px;
   border-radius: 4px;
   transition: background-color 0.3s;
   justify-content: center;
@@ -88,7 +88,7 @@ button {
 }
 
 #search-address-button:hover {
-  background-color: #218838;
+  background-color: #444;
 }
 
 /* 주문 상품 섹션 */

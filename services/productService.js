@@ -1,9 +1,14 @@
 const API_BASE_URL = "https://goldsilkaws.metashopping.kr";
 
-// 모든 상품 조회
-export async function getAllProducts() {
+/**
+ * 모든 상품 조회
+ * @param {Object} [params] - 선택적 필터 매개변수
+ * @returns {Promise<Array>}
+ */
+export async function getAllProducts(params = {}) {
   try {
-    const response = await fetch(`${API_BASE_URL}/products`);
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(`${API_BASE_URL}/products?${query}`);
     if (!response.ok) throw new Error("Failed to fetch products");
     return await response.json();
   } catch (error) {
@@ -12,7 +17,11 @@ export async function getAllProducts() {
   }
 }
 
-// 특정 상품 조회
+/**
+ * 특정 상품 조회
+ * @param {number} productId - 상품 ID
+ * @returns {Promise<Object>}
+ */
 export async function getProductById(productId) {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`);
@@ -24,14 +33,19 @@ export async function getProductById(productId) {
   }
 }
 
-// 상품 생성 (관리자 전용)
+/**
+ * 상품 생성 (관리자 전용)
+ * @param {Object} productData - 상품 데이터
+ * @returns {Promise<Object>}
+ */
 export async function createProduct(productData) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(`${API_BASE_URL}/products`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // 관리자 인증 토큰
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(productData),
     });
@@ -43,16 +57,22 @@ export async function createProduct(productData) {
   }
 }
 
-// 상품 수정 (관리자 전용)
-export async function updateProduct(productId, productData) {
+/**
+ * 상품 수정 (관리자 전용)
+ * @param {number} productId - 상품 ID
+ * @param {Object} updates - 수정 데이터
+ * @returns {Promise<Object>}
+ */
+export async function updateProduct(productId, updates) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(productData),
+      body: JSON.stringify(updates),
     });
     if (!response.ok) throw new Error("Failed to update product");
     return await response.json();
@@ -62,13 +82,18 @@ export async function updateProduct(productId, productData) {
   }
 }
 
-// 상품 삭제 (관리자 전용)
+/**
+ * 상품 삭제 (관리자 전용)
+ * @param {number} productId - 상품 ID
+ * @returns {Promise<Object>}
+ */
 export async function deleteProduct(productId) {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     if (!response.ok) throw new Error("Failed to delete product");
@@ -79,7 +104,11 @@ export async function deleteProduct(productId) {
   }
 }
 
-// 검색
+/**
+ * 검색된 상품 조회
+ * @param {string} query - 검색어
+ * @returns {Promise<Array>}
+ */
 export async function searchProducts(query) {
   try {
     const response = await fetch(
@@ -93,7 +122,11 @@ export async function searchProducts(query) {
   }
 }
 
-// 필터링
+/**
+ * 상품 필터링
+ * @param {Object} filters - 필터 조건
+ * @returns {Promise<Array>}
+ */
 export async function filterProducts(filters) {
   try {
     const queryParams = new URLSearchParams(filters).toString();
@@ -108,7 +141,11 @@ export async function filterProducts(filters) {
   }
 }
 
-// 비슷한 상품 보기
+/**
+ * 비슷한 상품 조회
+ * @param {number} productId - 상품 ID
+ * @returns {Promise<Array>}
+ */
 export async function getSimilarProducts(productId) {
   try {
     const response = await fetch(

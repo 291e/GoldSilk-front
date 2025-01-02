@@ -1,16 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>황금단 - 전통과 현대의 조화를 이루는 한복 전문 쇼핑몰</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/styles/community.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
-    <div></div>
+    <header-component></header-component>
 
-    <script>
-      alert("준비 중인 페이지입니다.");
-      window.location.href = "/"; // 로그인 페이지로 이동
-    </script>
+    <!-- 커뮤니티 메인 -->
+    <main class="community-main">
+      <div class="main-container">
+        <section class="categories">
+          <div class="community-header">
+            <span>COMMUNITY</span>
+          </div>
+
+          <!-- 커뮤니티 컨테이너 -->
+          <div class="community-container">
+            <!-- 커뮤니티 게시판 내용이 JavaScript로 동적으로 추가됩니다. -->
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="/components/layout.js"></script>
+    <script type="module" src="/Community/community.js"></script>
   </body>
 </html>

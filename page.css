@@ -268,22 +268,20 @@
   color: #f76560;
 }
 
-.product-buttons .buy-now {
+.product-buttons .cart {
   background-color: #000;
   color: #fff;
 }
 
-.product-buttons .cart,
 .product-buttons .wish {
   background-color: #f1f1f1;
   color: #333;
 }
 
-.product-buttons .buy-now:hover {
+.product-buttons .cart:hover {
   background-color: #333;
 }
 
-.product-buttons .cart:hover,
 .product-buttons .wish:hover {
   background-color: #ddd;
 }
@@ -515,6 +513,8 @@
 
 .section.active {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .section img {

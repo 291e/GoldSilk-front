@@ -15,12 +15,11 @@ hanbok-component {
 }
 
 .hanbok-container {
-  padding: 20px;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 1480px;
-  margin: 0 auto;
+  margin: 20px auto;
 }
 
 .hanbok-header {
@@ -122,6 +121,18 @@ hanbok-component {
   color: #333;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.wishlist-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+}
+
+.wishlist-count {
+  font-size: 8px;
 }
 
 .product-info {

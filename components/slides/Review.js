@@ -5,38 +5,38 @@ class ReviewSliderComponent extends HTMLElement {
       {
         id: 1,
         image: "public/product/product01.jpg",
-        title: "Excellent Service",
-        content:
-          "The service was fantastic, and the quality of the product exceeded my expectations!",
-        name: "John Doe",
+        title: "훌륭한 서비스",
+        content: "서비스가 환상적이었고, 제품의 품질이 제 기대를 초과했습니다!",
+        name: "김철수",
         stars: 5,
+        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=1", // 해당 상품 링크
       },
       {
         id: 2,
         image: "public/product/product02.jpg",
-        title: "Amazing Experience",
-        content:
-          "I highly recommend this to anyone looking for great service and support.",
-        name: "Jane Smith",
+        title: "놀라운 경험",
+        content: "멋진 서비스와 지원을 원하는 분들께 적극 추천드립니다.",
+        name: "이영희",
         stars: 5,
+        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=3", // 해당 상품 링크
       },
       {
         id: 3,
         image: "public/product/product03.jpg",
-        title: "Very Satisfied",
-        content:
-          "Absolutely loved it! The team was helpful, and the product is top-notch.",
-        name: "Emily Johnson",
+        title: "매우 만족",
+        content: "정말 사랑스러웠습니다! 팀이 친절했고, 제품이 최고였습니다.",
+        name: "박수진",
         stars: 5,
+        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=24", // 해당 상품 링크
       },
       {
         id: 4,
         image: "public/product/product04.jpg",
-        title: "Highly Recommend",
-        content:
-          "Great service, amazing products! Will definitely come back again.",
-        name: "Michael Brown",
+        title: "적극 추천",
+        content: "훌륭한 서비스와 놀라운 제품! 다시 이용할 예정입니다.",
+        name: "최민호",
         stars: 5,
+        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=23", // 해당 상품 링크
       },
       // 필요한 경우 더 많은 리뷰 추가
     ];
@@ -56,10 +56,12 @@ class ReviewSliderComponent extends HTMLElement {
             .map(
               (review) => `
             <div class="swiper-slide review">
-              <div class="review-image-wrapper">
-                <img src="${review.image || "public/default-image.jpg"}" alt="${
-                review.name || "고객님"
-              }" class="review-image" />
+              <div class="review-image-wrapper" style="transform:none;">
+                <a href="${review.link || "#"}">
+                  <img src="${
+                    review.image || "public/default-image.jpg"
+                  }" alt="${review.name || "고객님"}" class="review-image" />
+                </a>
               </div>
               <div class="review-text">
                 <span class="review-title">${review.title || "제목 없음"}</span>
@@ -87,7 +89,7 @@ class ReviewSliderComponent extends HTMLElement {
 
     // Swiper 초기화
     new Swiper(".review-slider", {
-      slidesPerView: 3, // 한 화면에 보이는 슬라이드 수
+      slidesPerView: 4, // 한 화면에 보이는 슬라이드 수
       spaceBetween: 20, // 슬라이드 간 간격
       loop: true, // 무한 루프
       navigation: {

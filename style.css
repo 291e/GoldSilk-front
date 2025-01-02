@@ -43,7 +43,6 @@ header-component {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 20px;
   transition: all 0.3s ease;
 }
 
@@ -53,6 +52,7 @@ header-component {
   justify-content: center;
   width: 100%;
   max-width: 1200px;
+  margin: 0 10px;
   gap: 20px;
 }
 
@@ -907,6 +907,32 @@ ad-banner-component {
   display: block;
 }
 
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #c1aa92;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.user-text {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.user-icon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  justify-content: space-between;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 980px) {
   .innerHeader {
@@ -919,6 +945,10 @@ ad-banner-component {
   }
 
   .menu {
+    display: none;
+  }
+
+  .user-text {
     display: none;
   }
 
