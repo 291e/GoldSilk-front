@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>상품 수정 - 황금단</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/page.css" />
+    <link rel="stylesheet" href="/styles/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header-component></header-component>
+
+    <main class="container">
+      <div class="product-main">
+        <span class="admin-icon">상품 수정</span>
+        <div class="product-container">
+          <!-- 기존 이미지 표시 -->
+          <div class="product-image-section">
+            <div class="label-upload" style="height: 100%">
+              <div
+                class="product-image-wrapper"
+                style="display: flex; flex-direction: column"
+              >
+                <span class="result-text">메인 이미지</span>
+                <img
+                  id="currentMainImage"
+                  src=""
+                  alt="현재 메인 이미지"
+                  class="product-image"
+                />
+                <button id="resetMainImageButton" class="small-btn">
+                  되돌리기
+                </button>
+              </div>
+              <div
+                class="product-image-wrapper"
+                style="display: flex; flex-direction: column"
+              >
+                <span class="result-text">디테일 이미지</span>
+                <img
+                  id="currentDetailImages"
+                  src=""
+                  alt="현재 디테일 이미지"
+                  class="product-image"
+                />
+                <button id="resetDetailImageButton" class="small-btn">
+                  되돌리기
+                </button>
+              </div>
+            </div>
+            <div class="label-upload" style="height: 100%">
+              <div>
+                <span class="result-text">메인 이미지 교체</span>
+                <label
+                  for="mainImage"
+                  class="result-image"
+                  style="display: flex"
+                ></label>
+                <input
+                  type="file"
+                  id="mainImage"
+                  name="main_image"
+                  accept="image/*"
+                />
+              </div>
+              <div>
+                <span class="result-text">디테일 이미지 교체</span>
+                <label
+                  for="detailImages"
+                  class="result-image"
+                  style="display: flex"
+                ></label>
+                <input
+                  type="file"
+                  id="detailImages"
+                  name="detail_image"
+                  accept="image/*"
+                />
+              </div>
+            </div>
+          </div>
+
+          <form id="editProductForm" class="product-info-section">
+            <div class="product-col">
+              <span>
+                <label for="productName">상품명</label>
+              </span>
+              <input type="text" id="productName" name="name" required />
+            </div>
+
+            <div class="product-col">
+              <span>
+                <label for="productPrice">판매가</label>
+              </span>
+              <input type="number" id="productPrice" name="price" required />
+            </div>
+
+            <div class="line-bar-product"></div>
+
+            <div class="product-col">
+              <span>
+                <label for="productDescription">설명</label>
+              </span>
+              <textarea
+                id="productDescription"
+                name="description"
+                style="max-width: 147px; padding: 0"
+              ></textarea>
+            </div>
+
+            <div class="line-bar-product"></div>
+
+            <div class="product-col">
+              <span>
+                <label for="productCategory">카테고리</label>
+              </span>
+              <input type="text" id="productCategory" name="category" />
+            </div>
+
+            <div class="product-col">
+              <span>
+                <label for="productTags">태그</label>
+              </span>
+              <input type="text" id="productTags" name="tags" />
+            </div>
+
+            <div class="product-buttons">
+              <button id="updateAttributesButton" type="button" class="cart">
+                속성 수정
+              </button>
+              <button id="updateImagesButton" type="button" class="cart">
+                이미지 수정
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="product-buttons" style="width: 50%">
+          <button
+            id="deleteProductButton"
+            class="wish"
+            style="font-size: 14px; background-color: brown; color: #eee"
+          >
+            상품 삭제
+          </button>
+          <button id="backToProductButton" class="wish" style="font-size: 14px">
+            돌아가기
+          </button>
+        </div>
+
+        <p id="messageBox" class="message-box"></p>
+      </div>
+    </main>
+
+    <footer-component></footer-component>
+
+    <script type="module" src="/components/layout.js"></script>
+    <script type="module" src="./editProduct.js"></script>
+  </body>
+</html>

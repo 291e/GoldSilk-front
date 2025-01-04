@@ -13,35 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     rememberMe.checked = true; // 체크박스 체크 상태 유지
   }
 
-  // 토큰 만료 확인 및 삭제
-  function checkTokenExpiration() {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      const tokenPayload = JSON.parse(atob(token.split(".")[1])); // JWT Payload 디코딩
-      const expirationTime = tokenPayload.exp * 1000; // 만료 시간 (밀리초)
-
-      if (Date.now() >= expirationTime) {
-        // 만료되었으면 로컬 스토리지에서 토큰 삭제
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("savedEmail");
-        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-        window.location.href = "/login.html"; // 로그인 페이지로 리다이렉트
-      } else {
-        // 만료 시간까지 남은 시간 계산
-        const timeUntilExpiration = expirationTime - Date.now();
-        setTimeout(() => {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("savedEmail");
-          alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-          window.location.href = "/login.html"; // 로그인 페이지로 리다이렉트
-        }, timeUntilExpiration);
-      }
-    }
-  }
-
-  // 페이지 로드 시 토큰 만료 확인
-  checkTokenExpiration();
-
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -58,13 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // 로그인 요청
-      const { token } = await loginUser({ email, password });
+      const user = await loginUser({ email, password });
 
-      if (token) {
+      if (user) {
         loginMessage.innerText = "로그인 성공! 메인 페이지로 이동합니다.";
-
-        // 토큰 저장
-        localStorage.setItem("accessToken", token);
 
         // 아이디 저장 여부 확인
         if (rememberMe.checked) {
@@ -72,9 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           localStorage.removeItem("savedEmail"); // 체크 해제 시 저장된 아이디 삭제
         }
-
-        // 토큰 만료 시간 확인 및 만료 예약
-        checkTokenExpiration();
 
         // 메인 페이지로 이동
         setTimeout(() => {

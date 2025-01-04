@@ -1,5 +1,5 @@
-import { fetchProductById, addToCart } from "./app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
-import { formatImagePath } from "./components/utils/image.js";
+import { fetchProductById, addToCart } from "../app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
+import { formatImagePath } from "../components/utils/image.js";
 
 // URL에서 상품 ID 가져오기
 const urlParams = new URLSearchParams(window.location.search);
@@ -7,6 +7,20 @@ const productId = urlParams.get("product_id"); // URL에서 product_id 가져오
 
 // 상품 렌더링 컨테이너
 const productPage = document.getElementById("product-page");
+
+// 어드민 여부 확인 (예: 토큰에서 is_admin 확인)
+function isAdmin() {
+  const token = localStorage.getItem("refresh_token");
+  if (!token) return false;
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.is_admin || false; // 토큰에 `is_admin` 필드가 있다고 가정
+  } catch (error) {
+    console.error("Error decoding token:", error.message);
+    return false;
+  }
+}
 
 // 상품 데이터 렌더링 함수
 async function renderProduct(product) {
@@ -24,6 +38,13 @@ async function renderProduct(product) {
 
   productPage.innerHTML = `
   <div class="product-main">
+   ${
+     isAdmin()
+       ? `<div class="admin-icon">
+        <i class="fa-solid fa-gear" id="adminSettings"></i>
+      </div>`
+       : ""
+   }
     <div id="product-${product.product_id}" class="product-container">
       <!-- 이미지 섹션 -->
       <div class="product-image-section">
@@ -105,6 +126,12 @@ async function renderProduct(product) {
               <span id="result-text">AI 결과 이미지</span>
               <img id="generated-image" src="" alt="Generated Result" style="display: none; width: 300px; height: auto;">
             </div>
+
+            <!-- Modal 구조 추가 -->
+<div id="imageModal" class="modal">
+  <span class="close-modal">&times;</span>
+  <img class="modal-content" id="modalImage" />
+</div>
           </div>
         </div>
         
@@ -117,14 +144,12 @@ async function renderProduct(product) {
   <div id="detail-section" class="content-section" data-section="Detail">
     <div class="detail-image">
     ${
-      formattedImages
+      formattedDetailImages
         .map(
           (img, index) =>
-            `<img src="${img}" alt="Thumbnail ${index + 1}" class="thumbnail ${
-              index === 0 ? "active" : ""
-            }">`
+            `<img src="${img}" alt="Thumbnail ${index + 1}" class="detail-img">`
         )
-        .join("") || "<p>썸네일 이미지가 없습니다.</p>"
+        .join("") || ""
     }
     </div>
   </div>
@@ -220,6 +245,14 @@ async function initializeProductPage() {
     if (product) {
       await renderProduct(product); // 상품 렌더링
 
+      // 어드민 아이콘 이벤트 설정
+      if (isAdmin()) {
+        const adminSettings = document.getElementById("adminSettings");
+        adminSettings.addEventListener("click", () => {
+          window.location.href = `https://goldsilkaws.metashopping.kr/editProduct/editProduct.html?product_id=${productId}`;
+        });
+      }
+
       // 초기화 함수 호출
       addScrollMenu();
       // 이벤트 추가
@@ -233,6 +266,9 @@ async function initializeProductPage() {
       const resultImage = document.querySelector("#generated-image");
       const resultImageContainer = document.querySelector(".result-image");
       const uploadUi = document.querySelector(".upload-ui");
+      const modal = document.querySelector("#imageModal");
+      const modalImage = document.querySelector("#modalImage");
+      const closeModal = document.querySelector(".close-modal");
 
       // 로딩 애니메이션 요소
       const loadingAnimation = document.createElement("div");
@@ -331,7 +367,16 @@ async function initializeProductPage() {
             resultImage.style.display = "block";
 
             isImageSwapped = true; // Set the flag to true after successful swap
+            mainImage.style.cursor = "pointer"; // 클릭 가능하도록 스타일 변경
             console.log("합성 이미지 적용 완료!");
+
+            // 합성 완료 후 클릭 이벤트 등록
+            mainImage.addEventListener("click", () => {
+              if (mainImage.src) {
+                modalImage.src = mainImage.src;
+                modal.style.display = "flex";
+              }
+            });
           }
 
           // 디테일 이미지 합성
@@ -384,6 +429,18 @@ async function initializeProductPage() {
         } finally {
           // 로딩 애니메이션 종료
           loadingAnimation.style.display = "none";
+        }
+      });
+
+      // 모달 닫기
+      closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+
+      // 모달 외부 클릭 시 닫기
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.style.display = "none";
         }
       });
 

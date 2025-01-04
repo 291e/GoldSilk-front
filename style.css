@@ -721,7 +721,7 @@ review-slider-component {
 .swiper-button-prev::after,
 .swiper-button-next::after {
   margin-top: 0;
-  margin-bottom: 60px;
+  margin-bottom: 0;
 }
 
 /* 인스타그램 */

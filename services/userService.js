@@ -1,6 +1,36 @@
 const API_BASE_URL = "https://goldsilkaws.metashopping.kr";
 
-// 회원가입
+/**
+ * 이메일 중복 확인
+ * @param {string} email - 확인할 이메일
+ * @returns {Promise<{ isDuplicate: boolean, message: string }>} - 중복 여부와 메시지 반환
+ */
+export async function checkEmailDuplicate(email) {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/auth/check-email?email=${encodeURIComponent(email)}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "이메일 중복 확인 실패");
+    }
+
+    return await response.json(); // JSON 형태의 응답 반환
+  } catch (error) {
+    console.error("Email Duplicate Check Error:", error.message);
+    throw error; // 클라이언트에서 추가 처리를 위해 에러 전달
+  }
+}
+
+/**
+ * 회원가입
+ * @param {Object} userData - 회원가입 데이터
+ * @returns {Promise<Object>} - 회원가입 결과
+ */
 export async function registerUser(userData) {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -11,10 +41,10 @@ export async function registerUser(userData) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "회원가입 실패");
+      throw new Error(error.error || "회원가입 실패");
     }
 
-    return await response.json();
+    return await response.json(); // 성공한 경우 JSON 데이터 반환
   } catch (error) {
     console.error("Error during registration:", error.message);
     throw error;

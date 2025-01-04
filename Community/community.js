@@ -99,7 +99,7 @@ function addPostClickEvents() {
       const communityId = postElement.dataset.id;
       const communityType = postElement.dataset.type;
       if (communityId) {
-        window.location.href = `/Community/postDetail.html?community_id=${communityId}&type=${communityType}`;
+        window.location.href = `/postDetail.html?community_id=${communityId}&type=${communityType}`;
       }
     });
   });

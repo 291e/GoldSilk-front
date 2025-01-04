@@ -53,20 +53,36 @@ export async function getAllUsers() {
 /**
  * 상품 생성
  * @param {Object} productData - 상품 데이터
+ * @param {File} mainImage - 메인 이미지 파일
+ * @param {File[]} detailImages - 디테일 이미지 파일 배열
  * @returns {Promise<Object>} - 생성된 상품 정보
  */
-export async function createProduct(productData) {
+export async function createProduct(productData, mainImage, detailImages) {
   try {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("로그인이 필요합니다.");
 
+    // FormData 생성
+    const formData = new FormData();
+    formData.append("name", productData.name);
+    formData.append("price", productData.price);
+    formData.append("description", productData.description || "");
+    formData.append("category", productData.category || "");
+    formData.append("tags", JSON.stringify(productData.tags || []));
+
+    if (mainImage) formData.append("main_image", mainImage);
+    if (detailImages && detailImages.length > 0) {
+      detailImages.forEach((image, index) => {
+        formData.append(`detail_images[${index}]`, image);
+      });
+    }
+
     const response = await fetch(`${API_BASE_URL}/admin/products`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(productData),
+      body: formData,
     });
 
     if (!response.ok) {
@@ -80,38 +96,125 @@ export async function createProduct(productData) {
     throw error;
   }
 }
-
 /**
  * 상품 수정
  * @param {number} productId - 상품 ID
  * @param {Object} updates - 수정할 데이터
+ * @param {File} [mainImage] - 메인 이미지 파일 (선택적)
+ * @param {File} [detailImage] - 디테일 이미지 파일 (선택적)
  * @returns {Promise<Object>} - 수정된 상품 정보
  */
-export async function updateProduct(productId, updates) {
+export async function updateProduct(
+  productId,
+  updates,
+  mainImage,
+  detailImage
+) {
   try {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("로그인이 필요합니다.");
 
+    // FormData 생성
+    const formData = new FormData();
+
+    // 업데이트 필드 추가
+    if (updates.name) formData.append("name", updates.name.trim());
+    if (updates.price) formData.append("price", updates.price.toString());
+    if (updates.category) formData.append("category", updates.category.trim());
+    if (updates.tags && updates.tags.length > 0) {
+      formData.append("tags", JSON.stringify(updates.tags));
+    }
+
+    // 이미지 파일 추가
+    if (mainImage) {
+      console.log("Adding main image to FormData:", mainImage.name);
+      formData.append("main_image", mainImage);
+    }
+    if (detailImage) {
+      console.log("Adding detail image to FormData:", detailImage.name);
+      formData.append("detail_image", detailImage);
+    }
+
+    // FormData 내용 디버깅
+    formData.forEach((value, key) => {
+      console.log(`FormData Key: ${key}, Value: ${value}`);
+    });
+
+    // API 요청
+    const response = await fetch(
+      `${API_BASE_URL}/admin/products/${productId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData, // FormData 전달
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Server responded with error:", error);
+      throw new Error(error.message || "상품 수정에 실패했습니다.");
+    }
+
+    console.log("Product updated successfully.");
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating product:", error.message);
+    throw error;
+  }
+}
+
+export async function uploadProductImages(productId, mainImage, detailImage) {
+  try {
+    const formData = new FormData();
+    if (mainImage) formData.append("main_image", mainImage);
+    if (detailImage) formData.append("detail_image", detailImage);
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/products/${productId}/images`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Image upload failed");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error uploading images:", error.message);
+    throw error;
+  }
+}
+
+export async function updateProductAttributes(productId, updates) {
+  try {
     const response = await fetch(
       `${API_BASE_URL}/admin/products/${productId}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
         body: JSON.stringify(updates),
       }
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "상품 수정에 실패했습니다.");
+      throw new Error("Failed to update product attributes");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error updating product:", error.message);
+    console.error("Error updating product attributes:", error.message);
     throw error;
   }
 }
@@ -233,20 +336,29 @@ export async function updateOrderStatus(orderId, status) {
 /**
  * 커뮤니티 게시글 작성
  * @param {Object} postData - 게시글 데이터
+ * @param {File} [image] - 게시글 이미지 파일 (선택적)
  * @returns {Promise<Object>} - 생성된 게시글 정보
  */
-export async function createCommunityPost(postData) {
+export async function createCommunityPost(postData, image) {
   try {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("로그인이 필요합니다.");
 
+    // FormData 생성
+    const formData = new FormData();
+    formData.append("user_id", postData.user_id);
+    formData.append("title", postData.title);
+    formData.append("content", postData.content);
+    formData.append("type", postData.type);
+    if (postData.status) formData.append("status", postData.status);
+    if (image) formData.append("image", image);
+
     const response = await fetch(`${API_BASE_URL}/admin/community`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(postData), // 유저 정보 포함 데이터 전송
+      body: formData,
     });
 
     if (!response.ok) {
@@ -265,20 +377,28 @@ export async function createCommunityPost(postData) {
  * 커뮤니티 게시글 수정
  * @param {number} postId - 게시글 ID
  * @param {Object} updates - 수정 데이터
+ * @param {File} [image] - 새 이미지 파일 (선택적)
  * @returns {Promise<Object>} - 수정된 게시글 정보
  */
-export async function updateCommunityPost(postId, updates) {
+export async function updateCommunityPost(postId, updates, image) {
   try {
     const token = localStorage.getItem("access_token");
     if (!token) throw new Error("로그인이 필요합니다.");
 
+    // FormData 생성
+    const formData = new FormData();
+    if (updates.title) formData.append("title", updates.title);
+    if (updates.content) formData.append("content", updates.content);
+    if (updates.type) formData.append("type", updates.type);
+    if (updates.status) formData.append("status", updates.status);
+    if (image) formData.append("image", image);
+
     const response = await fetch(`${API_BASE_URL}/admin/community/${postId}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(updates),
+      body: formData,
     });
 
     if (!response.ok) {
