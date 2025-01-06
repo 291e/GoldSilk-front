@@ -1,5 +1,6 @@
-import { fetchProductById, addToCart } from "../app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
-import { formatImagePath } from "../components/utils/image.js";
+import { fetchProductById, addToCart } from "./app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
+import { formatImagePath } from "./components/utils/image.js";
+import { fetchProductOptions } from "./services/optionService.js";
 
 // URL에서 상품 ID 가져오기
 const urlParams = new URLSearchParams(window.location.search);
@@ -49,9 +50,12 @@ async function renderProduct(product) {
       <!-- 이미지 섹션 -->
       <div class="product-image-section">
         <div class="product-image-wrapper">
+          <div class="img_wrap">
           <img src="${formattedImages[0]}" alt="${
     product.name
   }" class="product-image">
+          </div>
+          <div class="zoom_result"></div>
         </div>
             <div class="label-upload">
               <label for="face-input" class="upload-label">
@@ -96,12 +100,15 @@ async function renderProduct(product) {
           <span>${product.price.toLocaleString()}원</span>
         </div>
         <div class="line-bar-product"></div>
+          <div class="product-options">
+            <div id="option-groups-container"></div>
+          </div>
+        <div class="line-bar-product"></div>
+        <div class="product-quantity">
         <div class="min-total">
           <span>(최소주문수량 1개 이상)</span>
           <span>수량을 선택해주세요.</span>
         </div>
-        <div class="line-bar-product"></div>
-        <div class="product-quantity">
           <label for="quantity">수량</label>
           <input type="number" id="quantity" name="quantity" value="1" min="1">
           <span class="total">${product.price.toLocaleString()}원</span>
@@ -126,12 +133,6 @@ async function renderProduct(product) {
               <span id="result-text">AI 결과 이미지</span>
               <img id="generated-image" src="" alt="Generated Result" style="display: none; width: 300px; height: auto;">
             </div>
-
-            <!-- Modal 구조 추가 -->
-<div id="imageModal" class="modal">
-  <span class="close-modal">&times;</span>
-  <img class="modal-content" id="modalImage" />
-</div>
           </div>
         </div>
         
@@ -238,12 +239,85 @@ function setupQuantityEvent(product) {
   });
 }
 
+async function renderProductOptions(productId) {
+  const optionsContainer = document.getElementById("option-groups-container");
+
+  try {
+    const optionsData = await fetchProductOptions(productId); // 옵션 데이터 로드
+
+    if (!optionsData || optionsData.length === 0) {
+      optionsContainer.innerHTML = "<p>선택 가능한 옵션이 없습니다.</p>";
+      return;
+    }
+
+    optionsData.forEach((group) => {
+      const groupElement = document.createElement("div");
+      groupElement.className = "option-group";
+      groupElement.innerHTML = `
+        <span>${group.name}</span>
+        <select id="option-group-${
+          group.option_group_id
+        }" class="option-select">
+          <option value="*" selected>[필수]옵션을 선택해주세요.</option>
+          <option value="**" disabled link_image="">-------------------</option>
+          ${group.options
+            .map(
+              (option) =>
+                `<option value="${option.option_id}" data-price="${Math.floor(
+                  option.additional_price || 0
+                )}">
+                  ${option.value} (+${Math.floor(
+                  option.additional_price || 0
+                ).toLocaleString()}원)
+                </option>`
+            )
+            .join("")}
+        </select>
+      `;
+      optionsContainer.appendChild(groupElement);
+    });
+  } catch (error) {
+    console.error("Error loading product options:", error.message);
+    optionsContainer.innerHTML = "<p>옵션 로드 중 오류가 발생했습니다.</p>";
+  }
+}
+
+function setupOptionEventListeners(product) {
+  const optionSelects = document.querySelectorAll(".option-select");
+  const totalPriceElement = document.querySelector(".product-total");
+  const totalNum = document.querySelector(".total");
+
+  optionSelects.forEach((select) => {
+    select.addEventListener("change", () => {
+      let additionalPrice = 0;
+
+      optionSelects.forEach((select) => {
+        const selectedOption = select.options[select.selectedIndex];
+        if (selectedOption) {
+          additionalPrice += parseInt(selectedOption.dataset.price || "0", 10);
+        }
+      });
+
+      const quantity = Math.max(
+        1,
+        parseInt(document.querySelector("#quantity").value, 10)
+      );
+      const totalPrice = (product.price + additionalPrice) * quantity;
+
+      totalPriceElement.textContent = `총 상품금액(수량): ${totalPrice.toLocaleString()}원 (${quantity}개)`;
+      totalNum.textContent = `${totalPrice.toLocaleString()}원`;
+    });
+  });
+}
+
 async function initializeProductPage() {
   try {
     const product = await fetchProductById(productId); // fetchProductById로 상품 데이터 가져오기
 
     if (product) {
       await renderProduct(product); // 상품 렌더링
+      await renderProductOptions(productId); // 옵션 렌더링
+      setupOptionEventListeners(product); // 옵션 이벤트 추가
 
       // 어드민 아이콘 이벤트 설정
       if (isAdmin()) {
