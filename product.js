@@ -50,12 +50,9 @@ async function renderProduct(product) {
       <!-- 이미지 섹션 -->
       <div class="product-image-section">
         <div class="product-image-wrapper">
-          <div class="img_wrap">
           <img src="${formattedImages[0]}" alt="${
     product.name
-  }" class="product-image">
-          </div>
-          <div class="zoom_result"></div>
+  }" class="product-image" id="zoom-image">
         </div>
             <div class="label-upload">
               <label for="face-input" class="upload-label">
@@ -133,6 +130,12 @@ async function renderProduct(product) {
               <span id="result-text">AI 결과 이미지</span>
               <img id="generated-image" src="" alt="Generated Result" style="display: none; width: 300px; height: auto;">
             </div>
+
+            <!-- Modal 구조 추가 -->
+<div id="imageModal" class="modal">
+  <span class="close-modal">&times;</span>
+  <img class="modal-content" id="modalImage" />
+</div>
           </div>
         </div>
         
@@ -259,7 +262,6 @@ async function renderProductOptions(productId) {
           group.option_group_id
         }" class="option-select">
           <option value="*" selected>[필수]옵션을 선택해주세요.</option>
-          <option value="**" disabled link_image="">-------------------</option>
           ${group.options
             .map(
               (option) =>
