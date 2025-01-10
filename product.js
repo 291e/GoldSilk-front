@@ -52,7 +52,7 @@ async function renderProduct(product) {
         <div class="product-image-wrapper">
           <img src="${formattedImages[0]}" alt="${
     product.name
-  }" class="product-image" id="zoom-image">
+  }" class="product-image" data-scale="4">
         </div>
             <div class="label-upload">
               <label for="face-input" class="upload-label">
@@ -220,6 +220,41 @@ async function renderProduct(product) {
 
 
   `;
+  // .photo 생성 및 스타일 설정
+  const productImage = document.querySelector(".product-image");
+  if (!productImage) {
+    console.error(".product-image 요소를 찾을 수 없습니다.");
+    return;
+  }
+  const photo = document.createElement("div");
+  photo.className = "photo";
+  photo.style.backgroundImage = `url(${productImage.src})`;
+  photo.style.position = "absolute";
+  photo.style.top = "0";
+  photo.style.left = "0";
+  photo.style.width = "100%";
+  photo.style.height = "100%";
+  photo.style.backgroundRepeat = "no-repeat";
+  photo.style.transition = "transform 0.2s ease-in-out";
+  photo.style.pointerEvents = "none";
+
+  productImage.parentElement.appendChild(photo);
+
+  productImage.addEventListener("mouseover", () => {
+    photo.style.transform = `scale(${productImage.dataset.scale || 2})`;
+  });
+
+  productImage.addEventListener("mouseout", () => {
+    photo.style.transform = "scale(1)";
+  });
+
+  productImage.addEventListener("mousemove", (e) => {
+    const rect = productImage.getBoundingClientRect();
+    const offsetX = ((e.clientX - rect.left) / rect.width) * 100;
+    const offsetY = ((e.clientY - rect.top) / rect.height) * 100;
+
+    photo.style.transformOrigin = `${offsetX}% ${offsetY}%`;
+  });
 }
 
 // 수량 변경 이벤트
@@ -443,7 +478,6 @@ async function initializeProductPage() {
             resultImage.style.display = "block";
 
             isImageSwapped = true; // Set the flag to true after successful swap
-            mainImage.style.cursor = "pointer"; // 클릭 가능하도록 스타일 변경
             console.log("합성 이미지 적용 완료!");
 
             // 합성 완료 후 클릭 이벤트 등록
@@ -505,6 +539,46 @@ async function initializeProductPage() {
         } finally {
           // 로딩 애니메이션 종료
           loadingAnimation.style.display = "none";
+
+          if (!mainImage) {
+            console.error(".product-image 요소를 찾을 수 없습니다.");
+            return;
+          }
+          // 기존 .photo 요소 제거
+          const existingPhoto = mainImage.parentElement.querySelector(".photo");
+          if (existingPhoto) {
+            existingPhoto.remove();
+          }
+
+          const photo = document.createElement("div");
+          photo.className = "photo";
+          photo.style.backgroundImage = `url(${mainImage.src})`;
+          photo.style.position = "absolute";
+          photo.style.top = "0";
+          photo.style.left = "0";
+          photo.style.width = "100%";
+          photo.style.height = "100%";
+          photo.style.backgroundRepeat = "no-repeat";
+          photo.style.transition = "transform 0.2s ease-in-out";
+          photo.style.pointerEvents = "none";
+
+          mainImage.parentElement.appendChild(photo);
+
+          mainImage.addEventListener("mouseover", () => {
+            photo.style.transform = `scale(${mainImage.dataset.scale || 2})`;
+          });
+
+          mainImage.addEventListener("mouseout", () => {
+            photo.style.transform = "scale(1)";
+          });
+
+          mainImage.addEventListener("mousemove", (e) => {
+            const rect = mainImage.getBoundingClientRect();
+            const offsetX = ((e.clientX - rect.left) / rect.width) * 100;
+            const offsetY = ((e.clientY - rect.top) / rect.height) * 100;
+
+            photo.style.transformOrigin = `${offsetX}% ${offsetY}%`;
+          });
         }
       });
 
