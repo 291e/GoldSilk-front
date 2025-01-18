@@ -3,7 +3,7 @@ import {
   updateProductAttributes,
   deleteProduct,
 } from "../services/adminService.js";
-import { fetchProductById } from "../app/api.js";
+import { getProductById } from "../services/productService.js";
 import { formatImagePath } from "../components/utils/image.js";
 
 // URL에서 상품 ID 가져오기
@@ -64,7 +64,7 @@ const originalImages = {
 // 상품 정보 로드
 async function loadProductData() {
   try {
-    const productData = await fetchProductById(productId);
+    const productData = await getProductById(productId);
     if (!productData) {
       alert("상품을 찾을 수 없습니다.");
       window.location.href = "/admin/products.html";

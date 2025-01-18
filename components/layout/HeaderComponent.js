@@ -1,5 +1,5 @@
-import { getUserProfile } from "../../services/userService.js";
 import { getCartItems } from "../../services/cartService.js";
+import { getUserProfile } from "../../services/userService.js"; // JWT 기반 사용자 정보 가져오기
 
 class HeaderComponent extends HTMLElement {
   async connectedCallback() {
@@ -17,48 +17,47 @@ class HeaderComponent extends HTMLElement {
       { name: "COMMUNITY", link: "/Community/community.html" },
     ];
 
-    const token = localStorage.getItem("access_token");
-    const isLoggedIn = Boolean(token);
+    let userState = {
+      isAuthenticated: false,
+      user: null,
+      isAdmin: false,
+    };
 
-    let profileLink = "/user/login.html";
-    let cartLink = "/user/login.html";
-    let userName = "로그인";
-    let cartItemCount = 0;
+    let cartItems = [];
 
-    if (isLoggedIn) {
-      try {
-        const user = await getUserProfile();
-        userName = user?.username || "사용자";
-
-        const cartItems = await getCartItems();
-        cartItemCount = cartItems.length;
-        profileLink = "/user/profile.html";
-        cartLink = "/Cart/cart.html";
-      } catch (error) {
-        console.error("Error loading user or cart data:", error.message);
-      }
+    try {
+      // 사용자 상태 초기화
+      userState = await initializeUserState();
+    } catch (error) {
+      console.warn("User state initialization failed:", error.message);
     }
 
+    try {
+      // 장바구니 아이템 가져오기
+      cartItems = await getCartItems();
+    } catch (error) {
+      console.warn("Error fetching cart items:", error.message);
+    }
+
+    // 헤더 렌더링
     this.renderHeader(
       menuItems,
-      profileLink,
-      cartLink,
-      isLoggedIn,
-      userName,
-      cartItemCount
+      userState.isAuthenticated,
+      userState.user,
+      userState.isAdmin,
+      cartItems.length
     );
+
     this.addHamburgerMenuListeners();
     this.addScrollListener();
   }
 
-  renderHeader(
-    menuItems,
-    profileLink,
-    cartLink,
-    isLoggedIn,
-    userName,
-    cartItemCount
-  ) {
+  renderHeader(menuItems, isAuthenticated, user, isAdmin, cartItemCount) {
+    const profileLink = isAuthenticated
+      ? "/user/profile.html"
+      : "/user/login.html";
+    const cartLink = isAuthenticated ? "/Cart/cart.html" : "/user/login.html";
+
     this.innerHTML = `
       <div class="header-placeholder"></div>
       <div class="header headerRelative">
@@ -74,13 +73,15 @@ class HeaderComponent extends HTMLElement {
               )
               .join("")}
           </nav>
-         <div class="user-text">
+          <div class="user-text">
             ${
-              isLoggedIn
+              isAuthenticated
                 ? `
                   <a class="user-icon" href="${profileLink}">
                     <i class="fa-regular fa-user"></i>
-                    <span class="user-name" style="font-size:14px; white-space:nowrap;">${userName}님</span>
+                    <span class="user-name" style="font-size:14px; white-space:nowrap;">${
+                      user.username
+                    }님</span>
                   </a>
                   <a class="user-icon cart-wrapper" href="${cartLink}">
                     <i class="fa-solid fa-cart-shopping" style="position:relative;">
@@ -105,7 +106,7 @@ class HeaderComponent extends HTMLElement {
                       }
                     </i>
                   </a>
-                ` /* 비로그인 시 아무것도 표시하지 않음 */
+                `
             }
           </div>
           <div class="hamburger-icon">
@@ -122,7 +123,7 @@ class HeaderComponent extends HTMLElement {
             )
             .join("")}
           <a class="mobile-menu-item" href="${profileLink}">
-            ${isLoggedIn ? `Profile (${userName})` : "Login"}
+            ${isAuthenticated ? `Profile (${user?.username || ""})` : "Login"}
           </a>
           <a class="mobile-menu-item" href="${cartLink}">장바구니</a>
         </div>
@@ -170,6 +171,25 @@ class HeaderComponent extends HTMLElement {
         placeholder.style.height = "0";
       }
     });
+  }
+}
+
+// JWT 기반 사용자 상태 초기화 함수
+async function initializeUserState() {
+  try {
+    const userProfile = await getUserProfile();
+    return {
+      isAuthenticated: true,
+      user: userProfile,
+      isAdmin: userProfile.is_admin || false,
+    };
+  } catch (error) {
+    console.error("Failed to fetch user profile:", error.message);
+    return {
+      isAuthenticated: false,
+      user: null,
+      isAdmin: false,
+    };
   }
 }
 

@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://goldsilkaws.metashopping.kr";
+const API_BASE_URL = "https://goldsilk.net";
 
 /**
  * 이벤트 알림 보내기 (어드민 전용)

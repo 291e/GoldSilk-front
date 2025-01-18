@@ -1,13 +1,11 @@
-// orderPage.js
-
-import { fetchOrderDetails, updateOrderDetails } from "../app/order.js";
-import { fetchUserProfile } from "../app/auth.js";
 import { formatImagePath } from "../components/utils/image.js";
+import { getOrderById, updateOrderDetails } from "../services/orderService.js";
 
 // URL에서 orderId 추출 (ex: ?orderId=...)
 const urlParams = new URLSearchParams(window.location.search);
 const orderIdParam = urlParams.get("orderId"); // DB에 있는 serial/uuid와 매핑해도 좋음
 
+console.log("Extracted orderId:", orderIdParam);
 // DOM 요소
 const orderDetailsContainer = document.getElementById("order-details");
 const totalAmountEl = document.getElementById("total-amount");
@@ -42,36 +40,45 @@ function openAddressSearch() {
 searchAddressButton.addEventListener("click", openAddressSearch);
 
 // ----- [2] 주문자 정보 렌더링 -----
-async function renderOrdererDetails() {
+async function renderOrdererDetails(orderDetails) {
   try {
-    const userProfile = await fetchUserProfile(); // 토큰 인증 후 사용자 정보
-    if (!userProfile) {
-      throw new Error("사용자 정보를 가져올 수 없습니다.");
-    }
-    ordererNameInput.value = userProfile.username || "";
-    ordererEmailInput.value = userProfile.email || "";
-    ordererPhoneInput.value = userProfile.phone || "";
-  } catch (error) {
-    console.error("주문자 정보 로드 오류:", error.message);
-  }
+    const user = orderDetails?.users; // 안전하게 접근
+    if (!user) throw new Error("주문자 정보를 가져올 수 없습니다.");
+
+    ordererNameInput.value = user.username || "";
+    ordererEmailInput.value = user.email || "";
+    ordererPhoneInput.value = user.phone || "";
+
+    console.log("주문자 정보:", user);
+  } catch (error) {}
 }
 
 // ----- [3] 주문 상세 정보 렌더링 -----
 async function renderOrderDetails() {
   try {
-    const orderDetails = await fetchOrderDetails(orderIdParam);
-    if (!orderDetails) {
-      throw new Error("주문 정보를 불러올 수 없습니다.");
-    }
+    if (!orderIdParam) throw new Error("orderId가 없습니다.");
 
+    const orderDetails = await getOrderById(orderIdParam);
+    if (!orderDetails) throw new Error("주문 정보를 가져올 수 없습니다.");
+
+    console.log("주문 상세 정보:", orderDetails);
+
+    // 주문자 정보 렌더링
+    await renderOrdererDetails(orderDetails);
+
+    // 주문 아이템 렌더링
     const renderedItems = await Promise.all(
-      orderDetails.orderItems.map(async (item) => {
-        const imagePath = await formatImagePath(item.images?.[0]);
+      orderDetails.order_items.map(async (item) => {
+        const product = item.products;
+        const imagePath = product?.images?.[0]
+          ? await formatImagePath(product.images[0])
+          : "/path/to/default-image.jpg";
+
         return `
           <div class="order-item">
-            <img src="${imagePath}" alt="${item.name}" />
+            <img src="${imagePath}" alt="${product.name || "상품명 없음"}" />
             <div class="order-info">
-              <p>${item.name}</p>
+              <p>${product.name || "상품명 없음"}</p>
               <p>수량: ${item.quantity}</p>
               <p>${(item.price * item.quantity).toLocaleString()} 원</p>
             </div>
@@ -81,17 +88,16 @@ async function renderOrderDetails() {
     );
 
     orderDetailsContainer.innerHTML = renderedItems.join("");
-    totalAmountEl.textContent = `${(
-      orderDetails.order.total_amount || 0
-    ).toLocaleString()} 원`;
+    totalAmountEl.textContent = `${orderDetails.total_amount.toLocaleString()} 원`;
 
     // 배송정보
-    recipientNameInput.value = orderDetails.order.recipient_name || "";
-    phoneNumberInput.value = orderDetails.order.phone_number || "";
-    shippingAddressInput.value = orderDetails.order.shipping_address || "";
-    messageInput.value = orderDetails.order.message || "";
+    recipientNameInput.value = orderDetails.recipient_name || "";
+    phoneNumberInput.value = orderDetails.phone_number || "";
+    shippingAddressInput.value = orderDetails.shipping_address || "";
+    messageInput.value = orderDetails.message || "";
   } catch (error) {
     console.error("주문 상세 정보 로드 오류:", error.message);
+    alert("주문 정보를 불러오는 중 문제가 발생했습니다.");
   }
 }
 
@@ -123,10 +129,11 @@ function generateValidOrderId(length = 12) {
 }
 
 // ----- [6] 토스페이먼츠 표준 결제창 초기화 -----
-const clientKey = "test_ck_AQ92ymxN34Zj26oj17mArajRKXvd"; // 예시용
+const clientKey = "test_ck_LlDJaYngroyWNqlQOP2K3ezGdRpX";
 const customerKey = "RiXaHh9k1gEshLSX299N9"; // 유추 불가능한 식별자(회원ID 등)
 const tossPayments = TossPayments(clientKey);
 const payment = tossPayments.payment({ customerKey });
+console.log("TossPayments 객체 타입:", typeof TossPayments); // 'function'이어야 함
 
 // ----- [7] 결제하기 버튼 -----
 paymentButton.addEventListener("click", async () => {
@@ -160,25 +167,27 @@ paymentButton.addEventListener("click", async () => {
     const validOrderId = generateValidOrderId(12);
 
     // 4) 결제창 호출
-    await payment.requestPayment({
-      method: "CARD",
-      amount: {
-        currency: "KRW",
-        value: amount,
-      },
-      orderId: validOrderId, // 토스페이먼츠에서 요구하는 형식
-      orderName: "Gold Silk Shop Order",
-      successUrl: window.location.origin + "/toss/success.html",
-      failUrl: window.location.origin + `/toss/fail.html`,
-      customerEmail: ordererEmailInput.value || "customer123@gmail.com",
-      customerName: ordererNameInput.value || "김토스",
-      card: {
-        useEscrow: false,
-        flowMode: "DEFAULT",
-        useCardPoint: false,
-        useAppCardOnly: false,
-      },
-    });
+    await payment
+      .requestPayment({
+        method: "CARD",
+        amount: {
+          currency: "KRW",
+          value: amount,
+        },
+        orderId: validOrderId, // 토스페이먼츠에서 요구하는 형식
+        orderName: "Gold Silk Shop Order",
+        successUrl: window.location.origin + "/toss/success.html",
+        failUrl: window.location.origin + `/toss/fail.html`,
+        customerEmail: ordererEmailInput.value || "customer123@gmail.com",
+        customerName: ordererNameInput.value || "김토스",
+        card: {
+          useEscrow: false,
+          flowMode: "DEFAULT",
+          useCardPoint: false,
+          useAppCardOnly: false,
+        },
+      })
+      .then(() => console.log("결제 요청 성공"));
   } catch (error) {
     console.error("결제 요청 오류:", error.message);
     alert("결제 요청 중 문제가 발생했습니다.\n" + error.message);

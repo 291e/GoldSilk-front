@@ -9,7 +9,7 @@ class ReviewSliderComponent extends HTMLElement {
         content: "서비스가 환상적이었고, 제품의 품질이 제 기대를 초과했습니다!",
         name: "김철수",
         stars: 5,
-        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=1", // 해당 상품 링크
+        link: "https://goldsilk.net/product.html?product_id=1", // 해당 상품 링크
       },
       {
         id: 2,
@@ -18,7 +18,7 @@ class ReviewSliderComponent extends HTMLElement {
         content: "멋진 서비스와 지원을 원하는 분들께 적극 추천드립니다.",
         name: "이영희",
         stars: 5,
-        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=3", // 해당 상품 링크
+        link: "https://goldsilk.net/product.html?product_id=3", // 해당 상품 링크
       },
       {
         id: 3,
@@ -27,7 +27,7 @@ class ReviewSliderComponent extends HTMLElement {
         content: "정말 사랑스러웠습니다! 팀이 친절했고, 제품이 최고였습니다.",
         name: "박수진",
         stars: 5,
-        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=24", // 해당 상품 링크
+        link: "https://goldsilk.net/product.html?product_id=24", // 해당 상품 링크
       },
       {
         id: 4,
@@ -36,7 +36,7 @@ class ReviewSliderComponent extends HTMLElement {
         content: "훌륭한 서비스와 놀라운 제품! 다시 이용할 예정입니다.",
         name: "최민호",
         stars: 5,
-        link: "https://goldsilkaws.metashopping.kr/product.html?product_id=23", // 해당 상품 링크
+        link: "https://goldsilk.net/product.html?product_id=23", // 해당 상품 링크
       },
       // 필요한 경우 더 많은 리뷰 추가
     ];

@@ -1,12 +1,12 @@
+import { formatImagePath } from "../components/utils/image.js";
 import {
-  fetchCart,
   deleteCartItem,
   updateCartItem,
   clearCart,
-} from "../app/api.js";
-import { formatImagePath } from "../components/utils/image.js";
-import { createOrder } from "../app/order.js";
-import { fetchUserProfile } from "../app/auth.js"; // 사용자 정보 가져오기
+  getCartItems,
+} from "../services/cartService.js";
+import { createOrder } from "../services/orderService.js";
+import { getUserProfile } from "../services/userService.js"; // userState 추가
 
 // DOM 요소 가져오기
 const cartContainer = document.querySelector(".cart-items");
@@ -18,7 +18,7 @@ const paymentButton = document.getElementById("payment-button");
 // 장바구니 렌더링 함수
 async function renderCart() {
   try {
-    const cartItems = await fetchCart();
+    const cartItems = await getCartItems();
 
     // 장바구니 비우기
     cartContainer.innerHTML = "";
@@ -129,7 +129,7 @@ clearCartButton.addEventListener("click", async () => {
 // 결제하기 버튼 클릭 시
 paymentButton.addEventListener("click", async () => {
   try {
-    const cartItems = await fetchCart();
+    const cartItems = await getCartItems();
 
     if (cartItems.length === 0) {
       alert("장바구니에 상품이 없습니다.");
@@ -137,7 +137,7 @@ paymentButton.addEventListener("click", async () => {
     }
 
     // 사용자 정보 가져오기
-    const user = await fetchUserProfile();
+    const user = await getUserProfile();
     if (!user) {
       alert("로그인이 필요합니다.");
       window.location.href = "/user/login.html"; // 로그인 페이지로 리디렉션
@@ -174,8 +174,9 @@ paymentButton.addEventListener("click", async () => {
       throw new Error("주문 생성 실패");
     }
 
-    alert("주문이 생성되었습니다. 결제를 진행하세요.");
-    window.location.href = `/order/order.html?orderId=${createdOrder.order_id}`;
+    console.log("Created order ID:", createdOrder.order.order_id);
+
+    window.location.href = `/order/order.html?orderId=${createdOrder.order.order_id}&userId=${userId}`;
   } catch (error) {
     console.error("결제 처리 중 오류:", error.message);
     alert("결제 처리 중 문제가 발생했습니다.");

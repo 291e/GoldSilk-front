@@ -12,6 +12,8 @@ body {
 hanbok-component {
   height: 100%;
   min-height: 100vh;
+  width: 100%;
+  display: flex;
 }
 
 .hanbok-container {
@@ -20,6 +22,7 @@ hanbok-component {
   width: 100%;
   max-width: 1480px;
   margin: 20px auto;
+  padding: 0 20px;
 }
 
 .hanbok-header {
@@ -211,5 +214,14 @@ hanbok-component {
 @media (max-width: 768px) {
   .product-grid {
     grid-template-columns: repeat(3, 1fr); /* 최대 5개의 컬럼 */
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .product-card:hover .product-image {
+    transform: none;
+  }
+  .product-card:hover .hover-icons {
+    opacity: 0;
   }
 }

@@ -1,9 +1,18 @@
-const API_BASE_URL = "https://goldsilkaws.metashopping.kr";
+const API_BASE_URL = "https://goldsilk.net";
+
+// 공통 헤더 설정 함수
+function getAuthHeaders() {
+  const token = localStorage.getItem("refresh_token");
+  if (!token) throw new Error("JWT 토큰이 없습니다.");
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
 
 /**
  * 이메일 중복 확인
- * @param {string} email - 확인할 이메일
- * @returns {Promise<{ isDuplicate: boolean, message: string }>} - 중복 여부와 메시지 반환
  */
 export async function checkEmailDuplicate(email) {
   try {
@@ -19,17 +28,16 @@ export async function checkEmailDuplicate(email) {
       throw new Error(error.message || "이메일 중복 확인 실패");
     }
 
-    return await response.json(); // JSON 형태의 응답 반환
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error("Email Duplicate Check Error:", error.message);
-    throw error; // 클라이언트에서 추가 처리를 위해 에러 전달
+    throw error;
   }
 }
 
 /**
  * 회원가입
- * @param {Object} userData - 회원가입 데이터
- * @returns {Promise<Object>} - 회원가입 결과
  */
 export async function registerUser(userData) {
   try {
@@ -44,14 +52,16 @@ export async function registerUser(userData) {
       throw new Error(error.error || "회원가입 실패");
     }
 
-    return await response.json(); // 성공한 경우 JSON 데이터 반환
+    return await response.json();
   } catch (error) {
     console.error("Error during registration:", error.message);
     throw error;
   }
 }
 
-// 로그인
+/**
+ * 로그인
+ */
 export async function loginUser(credentials) {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -67,57 +77,55 @@ export async function loginUser(credentials) {
 
     const data = await response.json();
 
-    // 토큰 저장 (로컬 스토리지 사용)
+    // 토큰 저장
     localStorage.setItem("access_token", data.token);
     localStorage.setItem("refresh_token", data.refresh_token);
 
-    return data.user; // 로그인된 유저 정보 반환
+    return data.user;
   } catch (error) {
-    console.error("Error during login:", error.message);
+    console.error("Login Error:", error.message);
     throw error;
   }
 }
 
-// 로그아웃
+/**
+ * 로그아웃
+ */
 export function logoutUser() {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
 }
 
-// 유저 정보 조회
+/**
+ * 유저 정보 조회
+ */
 export async function getUserProfile() {
   try {
-    const token = localStorage.getItem("access_token");
-    if (!token) throw new Error("로그인이 필요합니다.");
-
     const response = await fetch(`${API_BASE_URL}/auth/me`, {
-      headers: { Authorization: `Bearer ${token}` },
+      method: "GET",
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "유저 정보를 불러올 수 없습니다.");
+      throw new Error(`Failed to fetch user profile: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error("Error fetching user profile:", error.message);
+    console.error("Error in getUserProfile:", error.message);
     throw error;
   }
 }
 
-// 유저 정보 수정
+/**
+ * 유저 정보 수정
+ */
 export async function updateUserProfile(userId, updates) {
   try {
-    const token = localStorage.getItem("access_token");
-    if (!token) throw new Error("로그인이 필요합니다.");
-
     const response = await fetch(`${API_BASE_URL}/auth/${userId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(updates),
     });
 
@@ -133,19 +141,18 @@ export async function updateUserProfile(userId, updates) {
   }
 }
 
-// 비밀번호 변경
+/**
+ * 비밀번호 변경
+ */
 export async function changePassword(userId, passwords) {
   try {
-    const token = localStorage.getItem("access_token");
-    if (!token) throw new Error("로그인이 필요합니다.");
-
     const response = await fetch(`${API_BASE_URL}/auth/${userId}/password`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(passwords),
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        oldPassword: passwords.oldPassword,
+        newPassword: passwords.newPassword,
+      }),
     });
 
     if (!response.ok) {
@@ -160,15 +167,14 @@ export async function changePassword(userId, passwords) {
   }
 }
 
-// 회원 탈퇴
+/**
+ * 회원 탈퇴
+ */
 export async function deleteUser(userId) {
   try {
-    const token = localStorage.getItem("access_token");
-    if (!token) throw new Error("로그인이 필요합니다.");
-
     const response = await fetch(`${API_BASE_URL}/auth/${userId}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -183,7 +189,9 @@ export async function deleteUser(userId) {
   }
 }
 
-// 리프레시 토큰으로 액세스 토큰 갱신
+/**
+ * 리프레시 토큰으로 액세스 토큰 갱신
+ */
 export async function refreshAccessToken() {
   try {
     const refreshToken = localStorage.getItem("refresh_token");
@@ -202,8 +210,7 @@ export async function refreshAccessToken() {
 
     const data = await response.json();
     localStorage.setItem("access_token", data.token);
-
-    return data.token; // 새 액세스 토큰 반환
+    return data.token;
   } catch (error) {
     console.error("Error refreshing token:", error.message);
     throw error;

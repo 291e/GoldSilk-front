@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://goldsilkaws.metashopping.kr";
+const API_BASE_URL = "https://goldsilk.net";
 
 /**
  * 어드민 대시보드 데이터 가져오기

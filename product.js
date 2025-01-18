@@ -1,7 +1,7 @@
-import { fetchProductById, addToCart } from "./app/api.js"; // ID로 JSON 데이터를 가져오는 API 함수
+import { addCartItem } from "./services/cartService.js";
 import { formatImagePath } from "./components/utils/image.js";
 import { fetchProductOptions } from "./services/optionService.js";
-
+import { getProductById } from "./services/productService.js";
 // URL에서 상품 ID 가져오기
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get("product_id"); // URL에서 product_id 가져오기
@@ -100,6 +100,7 @@ async function renderProduct(product) {
           <div class="product-options">
             <div id="option-groups-container"></div>
           </div>
+
         <div class="line-bar-product"></div>
         <div class="product-quantity">
         <div class="min-total">
@@ -277,12 +278,61 @@ function setupQuantityEvent(product) {
   });
 }
 
-async function renderProductOptions(productId) {
+// 치수 입력 필드 생성 함수
+function renderDimensionForm() {
+  return `
+    <div class="dimension-form">
+      <span style="font-size:16px; color:#353535; font-weight:550; padding-buttom:5px">치수 입력 (필수)</span>
+      <div class="dimension-content">
+        <label for="event-name">행사명</label>
+        <input type="text" id="event-name" placeholder="예: 결혼식">
+      </div>
+      <div class="dimension-content">
+        <label for="event-date">일자</label>
+        <input type="date" id="event-date">
+      </div>
+      <div class="dimension-content">
+        <label for="height">키 (cm)</label>
+        <input type="number" id="height" placeholder="cm">
+      </div>
+      <div class="dimension-content">
+        <label for="weight">몸무게 (kg)</label>
+        <input type="number" id="weight" placeholder="kg">
+      </div>
+      <div class="dimension-content">
+        <label for="bust-size">가슴둘레 (cm)</label>
+        <input type="number" id="bust-size" placeholder="cm">
+      </div>
+      <div class="dimension-content">
+        <label for="bra-size">브라 치수</label>
+        <input type="text" id="bra-size" placeholder="예: 75B">
+      </div>
+      <div class="dimension-content">
+        <label for="foot-size">발 사이즈 (cm)</label>
+        <input type="number" id="foot-size" placeholder="cm">
+      </div>
+      <div class="dimension-content">
+        <label for="remarks">전달사항</label>
+        <textarea id="remarks" placeholder="추가 요청 사항을 입력하세요"></textarea>
+      </div>
+    </div>
+            <div class="line-bar-product"></div>
+    
+       <span style="font-size:16px; color:#353535; font-weight:550; padding-buttom:5px; margin-top: 10px">상품 옵션 (필수)</span>
+  `;
+}
+
+async function renderProductOptions(product) {
   const optionsContainer = document.getElementById("option-groups-container");
+
+  // 기존 옵션 필드 초기화
+  optionsContainer.innerHTML = "";
+
+  // 치수 입력 필드 추가
+  optionsContainer.innerHTML += renderDimensionForm();
 
   try {
     const optionsData = await fetchProductOptions(productId); // 옵션 데이터 로드
-
     if (!optionsData || optionsData.length === 0) {
       optionsContainer.innerHTML = "<p>선택 가능한 옵션이 없습니다.</p>";
       return;
@@ -296,7 +346,7 @@ async function renderProductOptions(productId) {
         <select id="option-group-${
           group.option_group_id
         }" class="option-select">
-          <option value="*" selected>[필수]옵션을 선택해주세요.</option>
+          <option value="*" selected>[필수] 옵션을 선택해주세요.</option>
           ${group.options
             .map(
               (option) =>
@@ -313,43 +363,90 @@ async function renderProductOptions(productId) {
       `;
       optionsContainer.appendChild(groupElement);
     });
+
+    // 옵션 변경 이벤트 리스너 추가
+    setupOptionEventListeners(product);
   } catch (error) {
     console.error("Error loading product options:", error.message);
     optionsContainer.innerHTML = "<p>옵션 로드 중 오류가 발생했습니다.</p>";
   }
 }
 
-function setupOptionEventListeners(product) {
-  const optionSelects = document.querySelectorAll(".option-select");
-  const totalPriceElement = document.querySelector(".product-total");
-  const totalNum = document.querySelector(".total");
+function collectFormData() {
+  const dimensions = {
+    행사명: document.getElementById("event-name").value.trim(),
+    일자: document.getElementById("event-date").value.trim(),
+    키: document.getElementById("height").value.trim(),
+    몸무게: document.getElementById("weight").value.trim(),
+    가슴둘레: document.getElementById("bust-size").value.trim(),
+    브라치수: document.getElementById("bra-size").value.trim(),
+    발사이즈: document.getElementById("foot-size").value.trim(),
+    전달사항: document.getElementById("remarks").value.trim(),
+  };
 
-  optionSelects.forEach((select) => {
-    select.addEventListener("change", () => {
-      let additionalPrice = 0;
+  const invalidDimensions = Object.entries(dimensions).filter(
+    ([key, value]) => !value && key !== "전달사항"
+  );
 
-      optionSelects.forEach((select) => {
-        const selectedOption = select.options[select.selectedIndex];
-        if (selectedOption) {
-          additionalPrice += parseInt(selectedOption.dataset.price || "0", 10);
-        }
-      });
+  if (invalidDimensions.length > 0) {
+    alert("모든 필수 입력값을 입력해주세요.");
+    throw new Error("Missing required dimension values");
+  }
 
-      const quantity = Math.max(
-        1,
-        parseInt(document.querySelector("#quantity").value, 10)
-      );
-      const totalPrice = (product.price + additionalPrice) * quantity;
-
-      totalPriceElement.textContent = `총 상품금액(수량): ${totalPrice.toLocaleString()}원 (${quantity}개)`;
-      totalNum.textContent = `${totalPrice.toLocaleString()}원`;
-    });
+  const options = {};
+  const selects = document.querySelectorAll(".option-select");
+  selects.forEach((select) => {
+    const selectedOption = select.options[select.selectedIndex];
+    if (selectedOption && selectedOption.value !== "*") {
+      options[select.id] = {
+        value: selectedOption.textContent.trim(),
+        additionalPrice: selectedOption.dataset.price || 0,
+      };
+    }
   });
+
+  return { dimensions, options };
+}
+
+function setupOptionEventListeners(product) {
+  const optionsContainer = document.getElementById("option-groups-container");
+
+  optionsContainer.removeEventListener("change", handleOptionChange); // 기존 리스너 제거
+  optionsContainer.addEventListener("change", handleOptionChange); // 새 리스너 추가
+
+  function handleOptionChange(e) {
+    if (!e.target.classList.contains("option-select")) return;
+
+    let additionalPrice = 0;
+
+    document.querySelectorAll(".option-select").forEach((select) => {
+      const selectedOption = select.options[select.selectedIndex];
+      if (selectedOption && selectedOption.dataset.price) {
+        additionalPrice += parseInt(selectedOption.dataset.price, 10);
+      }
+    });
+
+    const quantity = Math.max(
+      1,
+      parseInt(document.querySelector("#quantity").value, 10)
+    );
+    const totalPrice = (product.price + additionalPrice) * quantity;
+
+    document.querySelector(
+      ".product-total"
+    ).textContent = `총 상품금액(수량): ${totalPrice.toLocaleString()}원 (${quantity}개)`;
+    document.querySelector(
+      ".total"
+    ).textContent = `${totalPrice.toLocaleString()}원`;
+  }
 }
 
 async function initializeProductPage() {
   try {
-    const product = await fetchProductById(productId); // fetchProductById로 상품 데이터 가져오기
+    console.log("Initializing product page...");
+    console.log("Product ID:", productId); // 디버깅 로그 추가
+
+    const product = await getProductById(productId); // fetchProductById로 상품 데이터 가져오기
 
     if (product) {
       await renderProduct(product); // 상품 렌더링
@@ -358,9 +455,10 @@ async function initializeProductPage() {
 
       // 어드민 아이콘 이벤트 설정
       if (isAdmin()) {
+        console.log("Product data:", product);
         const adminSettings = document.getElementById("adminSettings");
         adminSettings.addEventListener("click", () => {
-          window.location.href = `https://goldsilkaws.metashopping.kr/editProduct/editProduct.html?product_id=${productId}`;
+          window.location.href = `https://goldsilk.net/editProduct/editProduct.html?product_id=${productId}`;
         });
       }
 
@@ -460,10 +558,10 @@ async function initializeProductPage() {
           });
           formData.append("target_file", targetFile);
 
-          const serverResponse = await fetch(
-            "https://goldsilkaws.metashopping.kr/face",
-            { method: "POST", body: formData }
-          );
+          const serverResponse = await fetch("https://goldsilk.net/face", {
+            method: "POST",
+            body: formData,
+          });
 
           if (!serverResponse.ok) {
             throw new Error(`Server Error: ${serverResponse.statusText}`);
@@ -517,7 +615,7 @@ async function initializeProductPage() {
             formData.append("detail_target_file", detailTargetFile);
 
             const detailServerResponse = await fetch(
-              "https://goldsilkaws.metashopping.kr/face",
+              "https://goldsilk.net/face",
               { method: "POST", body: formData }
             );
 
@@ -632,13 +730,17 @@ async function initializeProductPage() {
       }
 
       try {
-        const result = await addToCart(productId, 1);
+        // 치수 및 옵션 데이터 수집
+        const { dimensions, options } = collectFormData();
+
+        // 장바구니에 추가 요청
+        const result = await addCartItem(productId, 1, { dimensions, options });
 
         if (result) {
           alert("장바구니에 상품이 추가되었습니다!");
         }
       } catch (error) {
-        console.error("Error adding to cart:", error.message);
+        console.error("장바구니 추가 중 오류가 발생했습니다:", error.message);
         alert("장바구니 추가 중 오류가 발생했습니다.");
       }
     });

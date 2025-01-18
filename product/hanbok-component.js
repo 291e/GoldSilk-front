@@ -1,5 +1,6 @@
-import { fetchProducts, addToCart } from "../app/api.js"; // JSON 데이터를 가져오는 API 함수
 import { formatImagePath } from "../components/utils/image.js";
+import { addCartItem } from "../services/cartService.js";
+import { getAllProducts } from "../services/productService.js";
 
 class HanbokComponent extends HTMLElement {
   constructor() {
@@ -16,7 +17,7 @@ class HanbokComponent extends HTMLElement {
     this.title = this.getAttribute("data-title") || `${this.category} 한복`;
 
     try {
-      const allProducts = await fetchProducts();
+      const allProducts = await getAllProducts();
       this.products = allProducts.filter(
         (product) =>
           product.category?.trim().toLowerCase() ===
@@ -150,7 +151,7 @@ class HanbokComponent extends HTMLElement {
         }
 
         try {
-          await addToCart(productId, 1);
+          await addCartItem(productId, 1);
           alert("장바구니에 상품이 추가되었습니다!");
         } catch (error) {
           console.error("Error adding to cart:", error.message);

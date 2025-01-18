@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://goldsilkaws.metashopping.kr";
+const API_BASE_URL = "https://goldsilk.net";
 
 /**
  * 모든 상품 조회
@@ -40,7 +40,9 @@ export async function getProductById(productId) {
  */
 export async function createProduct(productData) {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("refresh_token");
+    if (!token) throw new Error("로그인이 필요합니다.");
+
     const response = await fetch(`${API_BASE_URL}/products`, {
       method: "POST",
       headers: {
@@ -49,7 +51,10 @@ export async function createProduct(productData) {
       },
       body: JSON.stringify(productData),
     });
-    if (!response.ok) throw new Error("Failed to create product");
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to create product");
+    }
     return await response.json();
   } catch (error) {
     console.error("Error creating product:", error.message);
@@ -65,7 +70,9 @@ export async function createProduct(productData) {
  */
 export async function updateProduct(productId, updates) {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("refresh_token");
+    if (!token) throw new Error("로그인이 필요합니다.");
+
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: "PUT",
       headers: {
@@ -74,7 +81,10 @@ export async function updateProduct(productId, updates) {
       },
       body: JSON.stringify(updates),
     });
-    if (!response.ok) throw new Error("Failed to update product");
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update product");
+    }
     return await response.json();
   } catch (error) {
     console.error("Error updating product:", error.message);
@@ -89,14 +99,17 @@ export async function updateProduct(productId, updates) {
  */
 export async function deleteProduct(productId) {
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("refresh_token");
+    if (!token) throw new Error("로그인이 필요합니다.");
+
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
-    if (!response.ok) throw new Error("Failed to delete product");
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to delete product");
+    }
     return await response.json();
   } catch (error) {
     console.error("Error deleting product:", error.message);
@@ -112,7 +125,7 @@ export async function deleteProduct(productId) {
 export async function searchProducts(query) {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/products/search?query=${query}`
+      `${API_BASE_URL}/products/search?query=${encodeURIComponent(query)}`
     );
     if (!response.ok) throw new Error("Failed to search products");
     return await response.json();
@@ -133,7 +146,10 @@ export async function filterProducts(filters) {
     const response = await fetch(
       `${API_BASE_URL}/products/filter?${queryParams}`
     );
-    if (!response.ok) throw new Error("Failed to filter products");
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to filter products");
+    }
     return await response.json();
   } catch (error) {
     console.error("Error filtering products:", error.message);

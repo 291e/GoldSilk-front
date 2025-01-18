@@ -3,7 +3,7 @@ export async function formatImagePath(imagePath) {
     return "placeholder.jpg"; // 기본 이미지 경로 반환
   }
 
-  const baseURL = "https://goldsilkaws.metashopping.kr"; // 서버의 base URL
+  const baseURL = "https://goldsilk.net"; // 서버의 base URL
 
   // 이미지 경로에 /images/가 포함되지 않으면 경로를 추가
   if (!imagePath.includes("/images/")) {
