@@ -27,6 +27,7 @@ async function renderCart() {
       cartContainer.innerHTML = "<p>장바구니가 비어 있습니다.</p>";
       totalPriceEl.textContent = "0 원";
       finalPriceEl.textContent = "0 원";
+
       return;
     }
 
@@ -69,7 +70,7 @@ async function renderCart() {
     totalPriceEl.textContent = `${totalPrice.toLocaleString()} 원`;
     finalPriceEl.textContent = `${totalPrice.toLocaleString()} 원`;
   } catch (error) {
-    console.error("장바구니 렌더링 오류:", error.message);
+    console.error("장바구니 렌더링 오류:", error);
     alert("장바구니를 불러오는 중 문제가 발생했습니다.");
   }
 }
@@ -84,7 +85,7 @@ cartContainer.addEventListener("click", async (event) => {
       alert("장바구니에서 항목이 삭제되었습니다.");
       renderCart(); // 장바구니 다시 렌더링
     } catch (error) {
-      console.error("항목 삭제 오류:", error.message);
+      console.error("항목 삭제 오류:", error);
       alert("장바구니 항목 삭제 중 문제가 발생했습니다.");
     }
   }
@@ -106,7 +107,7 @@ cartContainer.addEventListener("input", async (event) => {
       await updateCartItem(cartId, quantity);
       renderCart(); // 장바구니 다시 렌더링
     } catch (error) {
-      console.error("수량 업데이트 오류:", error.message);
+      console.error("수량 업데이트 오류:", error);
       alert("수량 업데이트 중 문제가 발생했습니다.");
     }
   }
@@ -120,7 +121,7 @@ clearCartButton.addEventListener("click", async () => {
       alert("장바구니가 비워졌습니다.");
       renderCart(); // 장바구니 다시 렌더링
     } catch (error) {
-      console.error("장바구니 비우기 오류:", error.message);
+      console.error("장바구니 비우기 오류:", error);
       alert("장바구니 비우기 중 문제가 발생했습니다.");
     }
   }
@@ -178,7 +179,7 @@ paymentButton.addEventListener("click", async () => {
 
     window.location.href = `/order/order.html?orderId=${createdOrder.order.order_id}&userId=${userId}`;
   } catch (error) {
-    console.error("결제 처리 중 오류:", error.message);
+    console.error("결제 처리 중 오류:", error);
     alert("결제 처리 중 문제가 발생했습니다.");
   }
 });

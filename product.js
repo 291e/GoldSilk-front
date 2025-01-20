@@ -1,3 +1,5 @@
+//@ts-check
+
 import { addCartItem } from "./services/cartService.js";
 import { formatImagePath } from "./components/utils/image.js";
 import { fetchProductOptions } from "./services/optionService.js";
@@ -18,7 +20,7 @@ function isAdmin() {
     const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.is_admin || false; // 토큰에 `is_admin` 필드가 있다고 가정
   } catch (error) {
-    console.error("Error decoding token:", error.message);
+    console.error("Error decoding token:", error);
     return false;
   }
 }
@@ -260,13 +262,14 @@ async function renderProduct(product) {
 
 // 수량 변경 이벤트
 function setupQuantityEvent(product) {
-  const quantityInput = productPage.querySelector("#quantity");
-  const totalPrice = productPage.querySelector(".product-total");
-  const totalNum = productPage.querySelector(".total");
+  const quantityInput = productPage?.querySelector("#quantity");
+  const totalPrice = productPage?.querySelector(".product-total");
+  const totalNum = productPage?.querySelector(".total");
 
   if (!quantityInput || !totalPrice || !totalNum) return;
 
   quantityInput.addEventListener("input", (e) => {
+    if (!e.target) return;
     const quantity = Math.max(1, parseInt(e.target.value, 10) || 1);
     e.target.value = quantity;
 
@@ -326,15 +329,21 @@ async function renderProductOptions(product) {
   const optionsContainer = document.getElementById("option-groups-container");
 
   // 기존 옵션 필드 초기화
-  optionsContainer.innerHTML = "";
+  if (optionsContainer) {
+    optionsContainer.innerHTML = "";
+  }
 
   // 치수 입력 필드 추가
-  optionsContainer.innerHTML += renderDimensionForm();
+  if (optionsContainer) {
+    optionsContainer.innerHTML += renderDimensionForm();
+  }
 
   try {
     const optionsData = await fetchProductOptions(productId); // 옵션 데이터 로드
     if (!optionsData || optionsData.length === 0) {
-      optionsContainer.innerHTML = "<p>선택 가능한 옵션이 없습니다.</p>";
+      if (optionsContainer) {
+        optionsContainer.innerHTML = "<p>선택 가능한 옵션이 없습니다.</p>";
+      }
       return;
     }
 
@@ -361,37 +370,38 @@ async function renderProductOptions(product) {
             .join("")}
         </select>
       `;
-      optionsContainer.appendChild(groupElement);
+      if (optionsContainer) {
+        optionsContainer.appendChild(groupElement);
+      }
     });
 
     // 옵션 변경 이벤트 리스너 추가
     setupOptionEventListeners(product);
   } catch (error) {
-    console.error("Error loading product options:", error.message);
-    optionsContainer.innerHTML = "<p>옵션 로드 중 오류가 발생했습니다.</p>";
+    console.error("Error loading product options:", error);
+    if (optionsContainer) {
+      optionsContainer.innerHTML = "<p>옵션 로드 중 오류가 발생했습니다.</p>";
+    }
   }
 }
 
 function collectFormData() {
   const dimensions = {
-    행사명: document.getElementById("event-name").value.trim(),
-    일자: document.getElementById("event-date").value.trim(),
-    키: document.getElementById("height").value.trim(),
-    몸무게: document.getElementById("weight").value.trim(),
-    가슴둘레: document.getElementById("bust-size").value.trim(),
-    브라치수: document.getElementById("bra-size").value.trim(),
-    발사이즈: document.getElementById("foot-size").value.trim(),
-    전달사항: document.getElementById("remarks").value.trim(),
+    행사명: document.getElementById("event-name")?.value.trim() || null,
+    일자: document.getElementById("event-date")?.value.trim() || null,
+    키: document.getElementById("height")?.value.trim() || null,
+    몸무게: document.getElementById("weight")?.value.trim() || null,
+    가슴둘레: document.getElementById("bust-size")?.value.trim() || null,
+    브라치수: document.getElementById("bra-size")?.value.trim() || null,
+    발사이즈: document.getElementById("foot-size")?.value.trim() || null,
+    전달사항: document.getElementById("remarks")?.value.trim() || null,
   };
 
-  const invalidDimensions = Object.entries(dimensions).filter(
-    ([key, value]) => !value && key !== "전달사항"
+  // 치수 필드가 없는 상품에 대해 기본값을 null로 설정
+  const hasDimensions = Object.values(dimensions).some(
+    (value) => value !== null
   );
-
-  if (invalidDimensions.length > 0) {
-    alert("모든 필수 입력값을 입력해주세요.");
-    throw new Error("Missing required dimension values");
-  }
+  const validDimensions = hasDimensions ? dimensions : null;
 
   const options = {};
   const selects = document.querySelectorAll(".option-select");
@@ -405,7 +415,9 @@ function collectFormData() {
     }
   });
 
-  return { dimensions, options };
+  const hasOptions = Object.keys(options).length > 0 ? options : null;
+
+  return { dimensions: validDimensions, options: hasOptions };
 }
 
 function setupOptionEventListeners(product) {
@@ -632,7 +644,7 @@ async function initializeProductPage() {
             }
           }
         } catch (error) {
-          console.error("Error during face swap process:", error.message);
+          console.error("Error during face swap process:", error);
           alert("오류가 발생했습니다. 다시 시도해주세요.");
         } finally {
           // 로딩 애니메이션 종료
@@ -739,8 +751,14 @@ async function initializeProductPage() {
         if (result) {
           alert("장바구니에 상품이 추가되었습니다!");
         }
+
+        // 장바구니 업데이트 이벤트 발행
+        const event = new CustomEvent("cartUpdated", {
+          detail: { addedProductId: productId },
+        });
+        window.dispatchEvent(event); // 전역으로 이벤트 발행
       } catch (error) {
-        console.error("장바구니 추가 중 오류가 발생했습니다:", error.message);
+        console.error("장바구니 추가 중 오류가 발생했습니다:", error);
         alert("장바구니 추가 중 오류가 발생했습니다.");
       }
     });

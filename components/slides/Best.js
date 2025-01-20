@@ -121,6 +121,12 @@ class BestProductComponent extends HTMLElement {
         try {
           await addCartItem(productId, 1); // 최신 API 호출로 장바구니에 추가
           alert("장바구니에 상품이 추가되었습니다!");
+
+          // 장바구니 업데이트 이벤트 발행
+          const event = new CustomEvent("cartUpdated", {
+            detail: { addedProductId: productId },
+          });
+          window.dispatchEvent(event); // 전역으로 이벤트 발행
         } catch (error) {
           console.error("Error adding to cart:", error.message);
           alert("장바구니 추가에 실패했습니다.");

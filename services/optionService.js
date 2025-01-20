@@ -6,7 +6,7 @@ export async function fetchProductOptions(productId) {
     }
     return await response.json();
   } catch (error) {
-    console.error("Error fetching product options:", error.message);
+    console.error("Error fetching product options:", error);
     throw error;
   }
 }

@@ -12,7 +12,7 @@ export async function getAllProducts(params = {}) {
     if (!response.ok) throw new Error("Failed to fetch products");
     return await response.json();
   } catch (error) {
-    console.error("Error fetching products:", error.message);
+    console.error("Error fetching products:", error);
     throw error;
   }
 }
@@ -28,7 +28,7 @@ export async function getProductById(productId) {
     if (!response.ok) throw new Error("Failed to fetch product details");
     return await response.json();
   } catch (error) {
-    console.error("Error fetching product details:", error.message);
+    console.error("Error fetching product details:", error);
     throw error;
   }
 }
@@ -53,11 +53,11 @@ export async function createProduct(productData) {
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to create product");
+      throw new Error(error || "Failed to create product");
     }
     return await response.json();
   } catch (error) {
-    console.error("Error creating product:", error.message);
+    console.error("Error creating product:", error);
     throw error;
   }
 }
@@ -83,11 +83,11 @@ export async function updateProduct(productId, updates) {
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to update product");
+      throw new Error(error || "Failed to update product");
     }
     return await response.json();
   } catch (error) {
-    console.error("Error updating product:", error.message);
+    console.error("Error updating product:", error);
     throw error;
   }
 }
@@ -108,11 +108,11 @@ export async function deleteProduct(productId) {
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to delete product");
+      throw new Error(error || "Failed to delete product");
     }
     return await response.json();
   } catch (error) {
-    console.error("Error deleting product:", error.message);
+    console.error("Error deleting product:", error);
     throw error;
   }
 }
@@ -130,7 +130,7 @@ export async function searchProducts(query) {
     if (!response.ok) throw new Error("Failed to search products");
     return await response.json();
   } catch (error) {
-    console.error("Error searching products:", error.message);
+    console.error("Error searching products:", error);
     throw error;
   }
 }
@@ -148,11 +148,11 @@ export async function filterProducts(filters) {
     );
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Failed to filter products");
+      throw new Error(error || "Failed to filter products");
     }
     return await response.json();
   } catch (error) {
-    console.error("Error filtering products:", error.message);
+    console.error("Error filtering products:", error);
     throw error;
   }
 }
@@ -170,7 +170,7 @@ export async function getSimilarProducts(productId) {
     if (!response.ok) throw new Error("Failed to fetch similar products");
     return await response.json();
   } catch (error) {
-    console.error("Error fetching similar products:", error.message);
+    console.error("Error fetching similar products:", error);
     throw error;
   }
 }

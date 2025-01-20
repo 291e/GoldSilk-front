@@ -153,8 +153,14 @@ class RecommendComponent extends HTMLElement {
           cartIcon.classList.remove("fa-cart-plus");
           cartIcon.classList.add("fa-cart-shopping", "active");
           alert("장바구니에 추가되었습니다.");
+
+          // 장바구니 업데이트 이벤트 발행
+          const event = new CustomEvent("cartUpdated", {
+            detail: { addedProductId: productId },
+          });
+          window.dispatchEvent(event); // 전역으로 이벤트 발행
         } catch (error) {
-          alert("장바구니 추가 실패: " + error.message);
+          alert("장바구니 추가 실패: " + error);
         }
       });
     });

@@ -22,7 +22,7 @@ export async function confirmPayment(paymentData) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error confirming payment:", error.message);
+    console.error("Error confirming payment:", error);
     throw error;
   }
 }

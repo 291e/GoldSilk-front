@@ -22,7 +22,7 @@ export async function getCartItems() {
     const cartItems = await response.json();
     return cartItems;
   } catch (error) {
-    console.error("Error fetching cart items:", error.message);
+    console.error("Error fetching cart items:", error);
     throw error;
   }
 }
@@ -49,7 +49,7 @@ export async function addCartItem(productId, quantity, options = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error adding cart item:", error.message);
+    console.error("Error adding cart item:", error);
     throw error;
   }
 }
@@ -76,7 +76,7 @@ export async function updateCartItem(cartId, quantity, options = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error updating cart item:", error.message);
+    console.error("Error updating cart item:", error);
     throw error;
   }
 }
@@ -99,7 +99,7 @@ export async function deleteCartItem(cartId) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error deleting cart item:", error.message);
+    console.error("Error deleting cart item:", error);
     throw error;
   }
 }
@@ -122,7 +122,7 @@ export async function clearCart() {
 
     return await response.json();
   } catch (error) {
-    console.error("Error clearing cart:", error.message);
+    console.error("Error clearing cart:", error);
     throw error;
   }
 }

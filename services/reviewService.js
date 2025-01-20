@@ -11,12 +11,12 @@ export async function getReviewsByProduct(productId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "리뷰 조회 실패");
+      throw new Error(error || "리뷰 조회 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching reviews:", error.message);
+    console.error("Error fetching reviews:", error);
     throw error;
   }
 }
@@ -48,12 +48,12 @@ export async function createReview(reviewData, image) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "리뷰 작성 실패");
+      throw new Error(error || "리뷰 작성 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error creating review:", error.message);
+    console.error("Error creating review:", error);
     throw error;
   }
 }
@@ -86,12 +86,12 @@ export async function updateReview(reviewId, updates, image) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "리뷰 수정 실패");
+      throw new Error(error || "리뷰 수정 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error updating review:", error.message);
+    console.error("Error updating review:", error);
     throw error;
   }
 }
@@ -115,12 +115,12 @@ export async function deleteReview(reviewId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "리뷰 삭제 실패");
+      throw new Error(error || "리뷰 삭제 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error deleting review:", error.message);
+    console.error("Error deleting review:", error);
     throw error;
   }
 }

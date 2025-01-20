@@ -26,7 +26,7 @@ export async function addToWishlist(productId) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error adding to wishlist:", error.message);
+    console.error("Error adding to wishlist:", error);
     throw error;
   }
 }
@@ -51,7 +51,7 @@ export async function getWishlist() {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching wishlist:", error.message);
+    console.error("Error fetching wishlist:", error);
     throw error;
   }
 }
@@ -80,7 +80,7 @@ export async function removeFromWishlist(productId) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error removing from wishlist:", error.message);
+    console.error("Error removing from wishlist:", error);
     throw error;
   }
 }

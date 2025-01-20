@@ -15,12 +15,12 @@ export async function getCommunityPosts(type = null) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "커뮤니티 게시글 조회 실패");
+      throw new Error(error || "커뮤니티 게시글 조회 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching community posts:", error.message);
+    console.error("Error fetching community posts:", error);
     throw error;
   }
 }
@@ -36,12 +36,12 @@ export async function getCommunityPostById(communityId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "게시글 조회 실패");
+      throw new Error(error || "게시글 조회 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching community post by ID:", error.message);
+    console.error("Error fetching community post by ID:", error);
     throw error;
   }
 }
@@ -71,12 +71,12 @@ export async function addComment(communityId, content) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "댓글 작성 실패");
+      throw new Error(error || "댓글 작성 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error adding comment:", error.message);
+    console.error("Error adding comment:", error);
     throw error;
   }
 }
@@ -103,12 +103,12 @@ export async function reportPost(communityId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "게시글 신고 실패");
+      throw new Error(error || "게시글 신고 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error reporting post:", error.message);
+    console.error("Error reporting post:", error);
     throw error;
   }
 }
@@ -135,12 +135,12 @@ export async function participateInEvent(eventId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "이벤트 참여 실패");
+      throw new Error(error || "이벤트 참여 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error participating in event:", error.message);
+    console.error("Error participating in event:", error);
     throw error;
   }
 }
@@ -158,12 +158,12 @@ export async function getCommentsByCommunityId(communityId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "댓글 조회 실패");
+      throw new Error(error || "댓글 조회 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching comments by community ID:", error.message);
+    console.error("Error fetching comments by community ID:", error);
     throw error;
   }
 }
@@ -181,12 +181,12 @@ export async function getPreviousCommunityPost(communityId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "이전 게시글 조회 실패");
+      throw new Error(error || "이전 게시글 조회 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching previous community post:", error.message);
+    console.error("Error fetching previous community post:", error);
     throw error;
   }
 }
@@ -204,12 +204,12 @@ export async function getNextCommunityPost(communityId) {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "다음 게시글 조회 실패");
+      throw new Error(error || "다음 게시글 조회 실패");
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching next community post:", error.message);
+    console.error("Error fetching next community post:", error);
     throw error;
   }
 }

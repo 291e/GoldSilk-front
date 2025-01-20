@@ -23,7 +23,7 @@ export async function trackShipping(orderId) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error tracking shipping:", error.message);
+    console.error("Error tracking shipping:", error);
     throw error;
   }
 }

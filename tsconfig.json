@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowJs": true, // JS 파일 허용
+    "checkJs": true, // JS 파일 타입 검사 활성화
+    "noEmit": true, // 컴파일된 파일 생성하지 않음
+    "strict": true // 엄격한 타입 검사
+  },
+  "include": ["**/*.js", "**/*.d.ts"], // 타입 검사 대상 파일
+  "exclude": ["node_modules"]
+}

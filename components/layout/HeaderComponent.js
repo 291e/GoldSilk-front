@@ -2,6 +2,11 @@ import { getCartItems } from "../../services/cartService.js";
 import { getUserProfile } from "../../services/userService.js"; // JWT 기반 사용자 정보 가져오기
 
 class HeaderComponent extends HTMLElement {
+  constructor() {
+    super();
+    this.cartItemCount = 0; // 장바구니 아이템 수 초기값
+  }
+
   async connectedCallback() {
     const menuItems = [
       { name: "BRAND", link: "/brand.html" },
@@ -35,6 +40,7 @@ class HeaderComponent extends HTMLElement {
     try {
       // 장바구니 아이템 가져오기
       cartItems = await getCartItems();
+      this.cartItemCount = cartItems.length; // 장바구니 아이템 수 설정
     } catch (error) {
       console.warn("Error fetching cart items:", error.message);
     }
@@ -50,6 +56,9 @@ class HeaderComponent extends HTMLElement {
 
     this.addHamburgerMenuListeners();
     this.addScrollListener();
+
+    // 장바구니 업데이트 이벤트 리스너 등록
+    this.addCartUpdateListener();
   }
 
   renderHeader(menuItems, isAuthenticated, user, isAdmin, cartItemCount) {
@@ -129,6 +138,32 @@ class HeaderComponent extends HTMLElement {
         </div>
       </div>
     `;
+  }
+
+  updateCartCount(newCount) {
+    this.cartItemCount = newCount; // 장바구니 아이템 수 업데이트
+    const cartCountElement = this.querySelector(".cart-count");
+
+    if (cartCountElement) {
+      cartCountElement.textContent = this.cartItemCount;
+    } else if (this.cartItemCount > 0) {
+      const cartIcon = this.querySelector(".fa-cart-shopping");
+      const span = document.createElement("span");
+      span.className = "cart-count";
+      span.textContent = this.cartItemCount;
+      cartIcon.appendChild(span);
+    }
+  }
+
+  addCartUpdateListener() {
+    window.addEventListener("cartUpdated", async () => {
+      try {
+        const cartItems = await getCartItems();
+        this.updateCartCount(cartItems.length);
+      } catch (error) {
+        console.error("장바구니 업데이트 중 오류:", error.message);
+      }
+    });
   }
 
   addHamburgerMenuListeners() {

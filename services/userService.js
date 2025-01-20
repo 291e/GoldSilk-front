@@ -31,7 +31,7 @@ export async function checkEmailDuplicate(email) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Email Duplicate Check Error:", error.message);
+    console.error("Email Duplicate Check Error:", error);
     throw error;
   }
 }
@@ -54,7 +54,7 @@ export async function registerUser(userData) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error during registration:", error.message);
+    console.error("Error during registration:", error);
     throw error;
   }
 }
@@ -83,7 +83,7 @@ export async function loginUser(credentials) {
 
     return data.user;
   } catch (error) {
-    console.error("Login Error:", error.message);
+    console.error("Login Error:", error);
     throw error;
   }
 }
@@ -113,7 +113,7 @@ export async function getUserProfile() {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error in getUserProfile:", error.message);
+    console.error("Error in getUserProfile:", error);
     throw error;
   }
 }
@@ -136,7 +136,7 @@ export async function updateUserProfile(userId, updates) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error updating user profile:", error.message);
+    console.error("Error updating user profile:", error);
     throw error;
   }
 }
@@ -162,7 +162,7 @@ export async function changePassword(userId, passwords) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error changing password:", error.message);
+    console.error("Error changing password:", error);
     throw error;
   }
 }
@@ -184,7 +184,7 @@ export async function deleteUser(userId) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error deleting user:", error.message);
+    console.error("Error deleting user:", error);
     throw error;
   }
 }
@@ -212,7 +212,7 @@ export async function refreshAccessToken() {
     localStorage.setItem("access_token", data.token);
     return data.token;
   } catch (error) {
-    console.error("Error refreshing token:", error.message);
+    console.error("Error refreshing token:", error);
     throw error;
   }
 }
