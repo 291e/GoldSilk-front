@@ -60,7 +60,7 @@ async function renderProduct(product) {
               <label for="face-input" class="upload-label">
                 <div class="upload-ui">
                   <img id="upload-icon" src="public/Vector.png" alt="upload">
-                  <span id="upload-text">얼굴 이미지</span>
+                  <span id="upload-text">나의 얼굴 이미지</span>
                 </div>
               </label>
               <input type="file" id="face-input" accept="image/*">

@@ -38,6 +38,52 @@ async function renderCart() {
       const imagePath = item.images?.[0] || "default-image.jpg";
       const formattedImagePath = await formatImagePath(imagePath);
 
+      // 옵션 데이터 파싱 및 처리
+      let optionsHTML = "<p>옵션 없음</p>";
+      let additionalPrice = 0; // 옵션 추가 금액 초기화
+      if (item.options) {
+        try {
+          const optionsData =
+            typeof item.options === "string"
+              ? JSON.parse(item.options) // 문자열인 경우 파싱
+              : item.options; // 이미 객체인 경우 바로 사용
+
+          // `dimensions` 및 `options` 처리
+          const dimensions = optionsData.dimensions
+            ? Object.entries(optionsData.dimensions)
+                .map(
+                  ([key, value]) =>
+                    `<li><strong>${key}:</strong> ${value || "N/A"}</li>`
+                )
+                .join("")
+            : "";
+
+          const options = optionsData.options
+            ? Object.entries(optionsData.options)
+                .map(([key, value]) => {
+                  additionalPrice += parseInt(value.additionalPrice || 0, 10); // 추가 금액 합산
+                  return `<li><strong>${
+                    value.value
+                  }:</strong> +${value.additionalPrice.toLocaleString()} 원</li>`;
+                })
+                .join("")
+            : "";
+
+          // 최종 옵션 HTML 생성
+          optionsHTML = `
+           <ul>
+             ${dimensions ? `<li><strong>치수:</strong></li>${dimensions}` : ""}
+             ${options ? `<li><strong>옵션:</strong></li>${options}` : ""}
+           </ul>
+         `;
+        } catch (error) {
+          console.warn("옵션 데이터 파싱 오류:", error);
+        }
+      }
+
+      // 기본 가격과 옵션 추가 금액 계산
+      const basePrice = item.price || 0; // 기본 가격 (없는 경우 0으로 처리)
+      const itemTotalPrice = (basePrice + additionalPrice) * item.quantity;
       const cartItemHTML = `
         <div class="cart-item">
           <div>
@@ -47,14 +93,14 @@ async function renderCart() {
           </div>
           <div class="product-info">
             <span>${item.name || "상품명 없음"}</span>
-            <span>${item.price?.toLocaleString() || "가격 정보 없음"} 원</span>
           </div>
           <div>
-            <input type="number" min="1" value="${
-              item.quantity || 1
-            }" data-id="${item.cart_id}" />
+            <span>${item.quantity}</span>
+           
           </div>
+     
           <div>${(item.price * item.quantity).toLocaleString()} 원</div>
+          <div>${(additionalPrice * item.quantity).toLocaleString()} 원</div>
           <div>무료</div>
           <div class="cart-btn">
             <button class="delete-btn" data-id="${item.cart_id}">삭제</button>
@@ -63,7 +109,7 @@ async function renderCart() {
       `;
 
       cartContainer.insertAdjacentHTML("beforeend", cartItemHTML);
-      totalPrice += item.price * item.quantity;
+      totalPrice += itemTotalPrice;
     }
 
     // 총 가격 업데이트
@@ -92,26 +138,26 @@ cartContainer.addEventListener("click", async (event) => {
 });
 
 // 수량 업데이트
-cartContainer.addEventListener("input", async (event) => {
-  if (event.target.type === "number") {
-    const cartId = event.target.dataset.id;
-    const quantity = parseInt(event.target.value, 10);
+// cartContainer.addEventListener("input", async (event) => {
+//   if (event.target.type === "number") {
+//     const cartId = event.target.dataset.id;
+//     const quantity = parseInt(event.target.value, 10);
 
-    if (quantity < 1) {
-      alert("수량은 1 이상이어야 합니다.");
-      event.target.value = 1;
-      return;
-    }
+//     if (quantity < 1) {
+//       alert("수량은 1 이상이어야 합니다.");
+//       event.target.value = 1;
+//       return;
+//     }
 
-    try {
-      await updateCartItem(cartId, quantity);
-      renderCart(); // 장바구니 다시 렌더링
-    } catch (error) {
-      console.error("수량 업데이트 오류:", error);
-      alert("수량 업데이트 중 문제가 발생했습니다.");
-    }
-  }
-});
+//     try {
+//       await updateCartItem(cartId, quantity);
+//       renderCart(); // 장바구니 다시 렌더링
+//     } catch (error) {
+//       console.error("수량 업데이트 오류:", error);
+//       alert("수량 업데이트 중 문제가 발생했습니다.");
+//     }
+//   }
+// });
 
 // 장바구니 비우기
 clearCartButton.addEventListener("click", async () => {

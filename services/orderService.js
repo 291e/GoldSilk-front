@@ -1,6 +1,17 @@
 const API_BASE_URL = "https://goldsilk.net";
 const API_BASE_URL_DEV = "htttp://localhost:8080";
 
+// 공통 헤더 설정 함수
+function getAuthHeaders() {
+  const token = localStorage.getItem("refresh_token");
+  if (!token) throw new Error("JWT 토큰이 없습니다.");
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 // 공통 유틸리티 함수: 요청 처리
 async function handleRequest(url, options) {
   try {
@@ -80,14 +91,24 @@ export async function updateOrderDetails(orderId, updates) {
 
 // **사용자 주문 내역 조회**
 export async function getUserOrders(page = 1, limit = 10) {
-  const token = getRefreshToken();
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/orders/my_orders?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: getAuthHeaders(),
+      }
+    );
 
-  return handleRequest(
-    `${API_BASE_URL}/orders/my_orders?page=${page}&limit=${limit}`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
+    if (!response.ok) {
+      throw new Error(await response.text());
     }
-  );
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    throw error;
+  }
 }
 
 // **주문 취소**

@@ -26,7 +26,7 @@ export async function formatImagePath(imagePath) {
     const blob = await response.blob();
     return URL.createObjectURL(blob);
   } catch (error) {
-    console.error("Error fetching image:", error.message);
+    console.error("Error fetching image:", error);
     return "placeholder.jpg"; // 오류 발생 시 기본 이미지 반환
   }
 }
