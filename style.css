@@ -33,7 +33,7 @@ main {
 /* 상단 */
 header-component {
   width: 100%;
-  z-index: 9;
+  z-index: 999;
 }
 
 /* 헤더 */
@@ -160,7 +160,7 @@ footer-component {
   width: 100%;
   height: 100%;
   display: flex;
-  z-index: 9;
+  z-index: 900;
   align-self: flex-end;
   border-top: 1px solid #ddd;
   justify-content: center;
@@ -805,7 +805,7 @@ instagram-component {
   padding: 8px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 100;
 }
 
 /* 위젯 버튼 */
@@ -954,6 +954,10 @@ ad-banner-component {
 @media (max-width: 768px) {
   body {
     font-size: 10px;
+  }
+
+  .footer-content {
+    flex-direction: column;
   }
 
   ad-banner-component {

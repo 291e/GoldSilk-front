@@ -145,6 +145,8 @@ paymentButton.addEventListener("click", async () => {
       shipping_address: shippingAddressInput.value.trim(),
       message: messageInput.value.trim(),
     };
+    await updateOrderDetails(orderIdParam, updatedOrder);
+
     if (
       !updatedOrder.recipient_name ||
       !updatedOrder.phone_number ||
@@ -165,6 +167,9 @@ paymentButton.addEventListener("click", async () => {
     // 3) 결제용 orderId 생성 (영문/숫자/-/_; 6~64자)
     //    혹은 DB에 이미 난수 형태로 저장된 order_uuid가 있다면 그 값을 사용
     const validOrderId = generateValidOrderId(12);
+
+    // **서버에 valid_order_id 저장**
+    await updateOrderDetails(orderIdParam, { valid_order_id: validOrderId });
 
     // 4) 결제창 호출
     await payment
@@ -189,8 +194,8 @@ paymentButton.addEventListener("click", async () => {
       })
       .then(() => console.log("결제 요청 성공"));
   } catch (error) {
-    console.error("결제 요청 오류:", error.message);
-    alert("결제 요청 중 문제가 발생했습니다.\n" + error.message);
+    console.error("결제 요청 오류:", error);
+    alert("결제 요청 중 문제가 발생했습니다.\n" + error);
   }
 });
 

@@ -19,6 +19,7 @@ class NewProductComponent extends HTMLElement {
           (product) =>
             Array.isArray(product.tags) && product.tags.includes("NEW")
         )
+        .sort((a, b) => b.product_id - a.product_id)
         .slice(0, 10); // 최신 10개 상품만 가져오기
 
       await this.render(); // 비동기 렌더링

@@ -19,6 +19,7 @@ class BestProductComponent extends HTMLElement {
           (product) =>
             Array.isArray(product.tags) && product.tags.includes("BEST")
         )
+        .sort((a, b) => b.product_id - a.product_id)
         .slice(0, 10); // 최대 10개 상품만 가져오기
 
       await this.render(); // 비동기 렌더링

@@ -30,6 +30,16 @@ h2 {
   color: #333;
 }
 
+.order-info {
+  flex: 1;
+}
+
+.orders-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+}
+
 /* 주문자 정보, 배송지 정보 섹션 */
 section {
   display: flex;
@@ -91,6 +101,19 @@ button {
   background-color: #444;
 }
 
+.order {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.order-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 /* 주문 상품 섹션 */
 .order-item {
   display: flex;
@@ -98,19 +121,26 @@ button {
   margin-bottom: 20px;
   border-bottom: 1px solid #eaeaea;
   padding-bottom: 10px;
+  gap: 10px;
 }
 
 .order-item img {
   width: 80px;
-  height: 80px;
+  height: 120px;
   object-fit: cover;
-  margin-right: 20px;
 }
 
-.order-info {
-  flex: 1;
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
+.order-footer {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
 .item-name {
   font-weight: 600;
   margin-bottom: 5px;
@@ -155,6 +185,31 @@ button {
   background-color: #0056b3;
 }
 
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.pagination-btn {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.pagination-btn.active {
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.pagination-btn:hover {
+  background-color: transparent;
+}
+
+#created-order {
+  font-weight: 550;
+}
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .order-container {

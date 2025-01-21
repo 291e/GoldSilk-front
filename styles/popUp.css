@@ -7,7 +7,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   display: none;
-  width: 500px;
+  width: 300px;
   text-align: center;
 }
 
@@ -37,16 +37,4 @@
 
 .popup button:hover {
   color: #555;
-}
-
-@media screen and (min-width: 768px) and (max-width: 1199px) {
-  .popup {
-    width: 300px; /* 작은 화면에서는 화면의 90%를 차지 */
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .popup {
-    width: 300px; /* 작은 화면에서는 화면의 90%를 차지 */
-  }
 }

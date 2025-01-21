@@ -19,9 +19,11 @@ class RecommendComponent extends HTMLElement {
       this.products = allProducts
         .filter(
           (product) =>
-            Array.isArray(product.tags) && product.tags.includes("BEST")
+            Array.isArray(product.tags) &&
+            (product.tags.includes("BEST") || product.tags.includes("NEW"))
         )
-        .slice(0, 10);
+        .sort((a, b) => b.product_id - a.product_id) // product_id 역순 정렬
+        .slice(0, 10); // 최대 10개만 표시
 
       if (this.products.length === 0) {
         this.innerHTML = `<p>추천할 상품이 없습니다.</p>`;

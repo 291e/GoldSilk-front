@@ -18,11 +18,13 @@ class HanbokComponent extends HTMLElement {
 
     try {
       const allProducts = await getAllProducts();
-      this.products = allProducts.filter(
-        (product) =>
-          product.category?.trim().toLowerCase() ===
-          this.category.trim().toLowerCase()
-      );
+      this.products = allProducts
+        .filter(
+          (product) =>
+            product.category?.trim().toLowerCase() ===
+            this.category.trim().toLowerCase()
+        )
+        .sort((a, b) => b.product_id - a.product_id);
 
       await this.render();
     } catch (error) {
@@ -46,7 +48,7 @@ class HanbokComponent extends HTMLElement {
             }개</span>
             <div class="filter">
               <select id="filter-select">
-                <option value="new">신상품</option>
+                <option value="new" selected>신상품</option>
                 <option value="name">상품명</option>
                 <option value="low-price">낮은 가격</option>
                 <option value="high-price">높은 가격</option>

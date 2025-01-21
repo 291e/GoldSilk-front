@@ -215,6 +215,22 @@ hanbok-component {
   .product-grid {
     grid-template-columns: repeat(3, 1fr); /* 최대 5개의 컬럼 */
   }
+  .pagination-btn {
+    font-size: 9px;
+    padding: 2.5px 5px;
+  }
+  .hanbok-title {
+    font-size: 16px;
+    margin: 0;
+    margin-bottom: 10px;
+  }
+  .product-count {
+    font-size: 12px;
+  }
+  .filter select {
+    padding: 0;
+    font-size: 12px;
+  }
 }
 
 @media (hover: none) and (pointer: coarse) {

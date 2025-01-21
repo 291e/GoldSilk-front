@@ -203,8 +203,7 @@ async function renderProduct(product) {
         <li>제품/택/패키지 박스 등에 훼손이 있어 교환 및 반품이 불가할 경우 재반송 처리됩니다.</li>
       </ul>
 
-      <h3>[ 서비스문의 ]</h3>
-      <p>문의는 042-385-1008 로 연락주세요.</p>
+
 
     </div>
   </div>
@@ -328,21 +327,18 @@ function renderDimensionForm() {
 async function renderProductOptions(product) {
   const optionsContainer = document.getElementById("option-groups-container");
 
-  // 기존 옵션 필드 초기화
-  if (optionsContainer) {
-    optionsContainer.innerHTML = "";
-  }
-
   // 치수 입력 필드 추가
   if (optionsContainer) {
-    optionsContainer.innerHTML += renderDimensionForm();
+    optionsContainer.innerHTML = renderDimensionForm();
   }
 
   try {
     const optionsData = await fetchProductOptions(productId); // 옵션 데이터 로드
     if (!optionsData || optionsData.length === 0) {
       if (optionsContainer) {
-        optionsContainer.innerHTML = "<p>선택 가능한 옵션이 없습니다.</p>";
+        // 치수 옵션만 표시
+        optionsContainer.innerHTML +=
+          "<p>선택 가능한 추가 상품 옵션이 없습니다.</p>";
       }
       return;
     }

@@ -90,8 +90,15 @@ export async function updateOrderDetails(orderId, updates) {
 }
 
 // **사용자 주문 내역 조회**
+/**
+ * 사용자 주문 내역 조회
+ * @param {number} page - 현재 페이지 번호 (기본값: 1)
+ * @param {number} limit - 한 페이지에 표시할 주문 개수 (기본값: 10)
+ * @returns {Promise<Object>} - 주문 데이터, 총 개수, 총 페이지수 포함
+ */
 export async function getUserOrders(page = 1, limit = 10) {
   try {
+    // API 호출
     const response = await fetch(
       `${API_BASE_URL}/orders/my_orders?page=${page}&limit=${limit}`,
       {
@@ -100,11 +107,18 @@ export async function getUserOrders(page = 1, limit = 10) {
       }
     );
 
+    // 응답 검증
     if (!response.ok) {
-      throw new Error(await response.text());
+      const errorMessage = await response.text();
+      throw new Error(errorMessage || "Failed to fetch user orders");
     }
 
-    return await response.json();
+    // JSON 데이터 파싱
+    const { orders, totalCount, totalPages, currentPage } =
+      await response.json();
+
+    // 필요한 데이터 반환
+    return { orders, totalCount, totalPages, currentPage };
   } catch (error) {
     console.error("Error fetching user orders:", error);
     throw error;
