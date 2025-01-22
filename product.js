@@ -4,6 +4,7 @@ import { addCartItem } from "./services/cartService.js";
 import { formatImagePath } from "./components/utils/image.js";
 import { fetchProductOptions } from "./services/optionService.js";
 import { getProductById } from "./services/productService.js";
+
 // URL에서 상품 ID 가져오기
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get("product_id"); // URL에서 product_id 가져오기
@@ -211,7 +212,7 @@ async function renderProduct(product) {
 
   <div id="review-section" class="content-section" data-section="Review">
     <h2>Review</h2>
-    <p>리뷰 내용이 여기에 들어갑니다...</p>
+     <review-component data-product-id="${productId}"></review-component>
   </div>
 
   <div id="qa-section" class="content-section" data-section="Q&A">
@@ -468,6 +469,15 @@ async function initializeProductPage() {
         adminSettings.addEventListener("click", () => {
           window.location.href = `https://goldsilk.net/editProduct/editProduct.html?product_id=${productId}`;
         });
+      }
+
+      // 리뷰 섹션에 리뷰 컴포넌트 추가
+      const reviewSection = document.querySelector("#review-section");
+      if (reviewSection) {
+        reviewSection.innerHTML = `
+          <h2>Review</h2>
+          <review-component data-product-id="${productId}"></review-component>
+        `;
       }
 
       // 초기화 함수 호출

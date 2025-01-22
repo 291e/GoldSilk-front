@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="/styles/product.css" />
     <link rel="stylesheet" href="/page.css" />
     <link rel="stylesheet" href="/styles/popUp.css" />
-
+    <link rel="stylesheet" href="/styles/review.css" />
     <!-- Swiper JS -->
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
   </head>
@@ -124,7 +124,10 @@
           </div>
         </div>
 
-        <review-slider-component class="fade-in"></review-slider-component>
+        <div class="swiper-text">
+          <span>고객 후기</span>
+          <span>상품을 이용하신 고객님들의 리얼 후기입니다!</span>
+        </div>
 
         <div style="width: 100%; display: flex; justify-content: center">
           <button class="moreBtn reverse">
@@ -132,6 +135,8 @@
             <i class="fa-solid fa-arrow-right"></i>
           </button>
         </div>
+
+        <div id="reviews-container"></div>
 
         <instagram-component></instagram-component>
       </div>
@@ -141,6 +146,7 @@
 
     <!-- JavaScript 상대 경로 -->
     <script type="module" src="/components/layout.js"></script>
-    <script src="/components/utils/popUp.js"></script>
+    <script type="module" src="/components/slides/recentReview.js"></script>
+    <!-- <script src="/components/utils/popUp.js"></script> -->
   </body>
 </html>

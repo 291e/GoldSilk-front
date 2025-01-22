@@ -1,5 +1,5 @@
-import { getCommunityPosts } from "/services/communityService.js";
-import { getReviewsByProduct } from "/services/reviewService.js";
+import { getCommunityPosts } from "../services/communityService.js";
+import { getReviewsByProduct } from "../services/reviewService.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const communityContainer = document.querySelector(".community-container");
@@ -108,30 +108,6 @@ function addPostClickEvents() {
 // 고객후기 섹션 렌더링
 async function renderReviews() {
   try {
-    let reviews = await getReviewsByProduct(1);
-
-    // 최신 순으로 정렬
-    reviews = reviews.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    );
-
-    const reviewItems = reviews
-      .slice(0, 3)
-      .map(
-        (review) => `
-          <div class="inquiry">
-            <img src="${
-              review.image || "/public/logo.jpg"
-            }" alt="리뷰 이미지" />
-            <span class="post-title" title="${review.title}">${
-          review.title || "리뷰 제목"
-        }</span>
-            <span>${formatDate(review.created_at)}</span>
-          </div>
-        `
-      )
-      .join("");
-
     return `
         <div class="post-container">
           <div class="post-layout">
@@ -140,7 +116,7 @@ async function renderReviews() {
               <a href="/Community/reviews.html">더보기 +</a>
             </div>
             <div class="post-line"></div>
-            <div class="inquiry-text">${reviewItems}</div>
+            <div id="reviews-section"></div>
             <div class="post-line"></div>
           </div>
         </div>

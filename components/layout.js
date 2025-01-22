@@ -7,7 +7,6 @@ import BestProductComponent from "./slides/Best.js";
 import InstagramComponent from "./slides/Instagram.js";
 import NewProductComponent from "./slides/NewProduct.js";
 import RecommendComponent from "./slides/Recommend.js";
-import ReviewSliderComponent from "./slides/Review.js";
 import SliderComponent from "./slides/Slider.js";
 import BrandInfoComponent from "./BrandInfo.js";
 

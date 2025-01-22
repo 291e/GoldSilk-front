@@ -95,6 +95,9 @@ async function renderOrderDetails() {
     phoneNumberInput.value = orderDetails.phone_number || "";
     shippingAddressInput.value = orderDetails.shipping_address || "";
     messageInput.value = orderDetails.message || "";
+
+    // 결제용 valid_order_id 저장
+    paymentButton.dataset.validOrderId = orderDetails.valid_order_id;
   } catch (error) {
     console.error("주문 상세 정보 로드 오류:", error.message);
     alert("주문 정보를 불러오는 중 문제가 발생했습니다.");
@@ -111,22 +114,6 @@ sameAsOrdererCheckbox.addEventListener("change", () => {
     phoneNumberInput.value = "";
   }
 });
-
-// ----- [5] 유효한 orderId 생성 함수 -----
-// 영문 대소문자, 숫자, -, _만 허용, 길이 6~64자
-function generateValidOrderId(length = 12) {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-  if (length < 6) length = 6;
-  if (length > 64) length = 64;
-
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * chars.length);
-    result += chars[randomIndex];
-  }
-  return result;
-}
 
 // ----- [6] 토스페이먼츠 표준 결제창 초기화 -----
 const clientKey = "test_ck_LlDJaYngroyWNqlQOP2K3ezGdRpX";
@@ -145,7 +132,6 @@ paymentButton.addEventListener("click", async () => {
       shipping_address: shippingAddressInput.value.trim(),
       message: messageInput.value.trim(),
     };
-    await updateOrderDetails(orderIdParam, updatedOrder);
 
     if (
       !updatedOrder.recipient_name ||
@@ -166,10 +152,11 @@ paymentButton.addEventListener("click", async () => {
 
     // 3) 결제용 orderId 생성 (영문/숫자/-/_; 6~64자)
     //    혹은 DB에 이미 난수 형태로 저장된 order_uuid가 있다면 그 값을 사용
-    const validOrderId = generateValidOrderId(12);
-
-    // **서버에 valid_order_id 저장**
-    await updateOrderDetails(orderIdParam, { valid_order_id: validOrderId });
+    const validOrderId = paymentButton.dataset.validOrderId;
+    if (!validOrderId) {
+      alert("유효한 주문 ID가 없습니다. 주문 정보를 다시 확인하세요.");
+      return;
+    }
 
     // 4) 결제창 호출
     await payment

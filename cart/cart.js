@@ -39,32 +39,51 @@ async function renderCart() {
       const formattedImagePath = await formatImagePath(imagePath);
 
       // 옵션 데이터 파싱 및 처리
-      const options = item.options ? JSON.parse(item.options) : null;
-      const dimensions = options?.dimensions || {};
-      const selectedOptions = options?.options || {};
+      let optionsHTML = "<p>옵션 없음</p>";
+      let additionalPrice = 0; // 옵션 추가 금액 초기화
+      if (item.options) {
+        try {
+          const optionsData =
+            typeof item.options === "string"
+              ? JSON.parse(item.options) // 문자열인 경우 파싱
+              : item.options; // 이미 객체인 경우 바로 사용
 
-      // 추가 가격 계산
-      const additionalPrice = Object.values(selectedOptions).reduce(
-        (acc, option) => acc + (option.additionalPrice || 0),
-        0
-      );
+          // `dimensions` 및 `options` 처리
+          const dimensions = optionsData.dimensions
+            ? Object.entries(optionsData.dimensions)
+                .map(
+                  ([key, value]) =>
+                    `<li><strong>${key}:</strong> ${value || "N/A"}</li>`
+                )
+                .join("")
+            : "";
 
-      const totalItemPrice =
-        (item.products.price + additionalPrice) * item.quantity;
-      totalPrice += totalItemPrice;
-      const dimensionsHTML = Object.entries(dimensions)
-        .map(([key, value]) => `<li>${key}: ${value ? value : "없음"}</li>`)
-        .join("");
+          const options = optionsData.options
+            ? Object.entries(optionsData.options)
+                .map(([key, value]) => {
+                  additionalPrice += parseInt(value.additionalPrice || 0, 10); // 추가 금액 합산
+                  return `<li><strong>${
+                    value.value
+                  }:</strong> +${value.additionalPrice.toLocaleString()} 원</li>`;
+                })
+                .join("")
+            : "";
 
-      const optionsHTML = Object.values(selectedOptions)
-        .map(
-          (option) =>
-            `<li>${
-              option.value
-            } (${option.additionalPrice.toLocaleString()} 원)</li>`
-        )
-        .join("");
+          // 최종 옵션 HTML 생성
+          optionsHTML = `
+           <ul>
+             ${dimensions ? `<li><strong>치수:</strong></li>${dimensions}` : ""}
+             ${options ? `<li><strong>옵션:</strong></li>${options}` : ""}
+           </ul>
+         `;
+        } catch (error) {
+          console.warn("옵션 데이터 파싱 오류:", error);
+        }
+      }
 
+      // 기본 가격과 옵션 추가 금액 계산
+      const basePrice = item.price || 0; // 기본 가격 (없는 경우 0으로 처리)
+      const itemTotalPrice = (basePrice + additionalPrice) * item.quantity;
       const cartItemHTML = `
         <div class="cart-item">
           <div>
@@ -90,6 +109,7 @@ async function renderCart() {
       `;
 
       cartContainer.insertAdjacentHTML("beforeend", cartItemHTML);
+      totalPrice += itemTotalPrice;
     }
 
     // 총 가격 업데이트
@@ -173,6 +193,20 @@ paymentButton.addEventListener("click", async () => {
 
     const userId = user.user_id; // 사용자 ID
 
+    // `validOrderId` 생성 (6~64자, 영문/숫자/-/_ 조합)
+    function generateValidOrderId(length = 12) {
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        result += chars[randomIndex];
+      }
+      return result;
+    }
+
+    const validOrderId = generateValidOrderId();
+
     // 주문 생성 데이터 준비
     const totalAmount = cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -182,6 +216,7 @@ paymentButton.addEventListener("click", async () => {
     const newOrder = {
       user_id: userId, // 로그인된 사용자 ID 사용
       total_amount: totalAmount,
+      valid_order_id: validOrderId,
       shipping_address: "", // 배송 주소 초기화
       recipient_name: "", // 수령인 이름 초기화
       phone_number: "", // 전화번호 초기화

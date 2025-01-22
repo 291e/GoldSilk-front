@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +11,14 @@
     />
     <link rel="stylesheet" href="page.css" />
     <link rel="stylesheet" href="style.css" />
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.7.1.js"
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
@@ -23,7 +31,9 @@
       <!-- 상품 정보는 JavaScript로 렌더링 -->
     </div>
     <footer-component></footer-component>
+
     <script type="module" src="product.js"></script>
     <script type="module" src="components/layout.js"></script>
+    <script type="module" src="components/slides/Review.js"></script>
   </body>
 </html>
