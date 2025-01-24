@@ -3,7 +3,10 @@ import { getReviewsByProduct } from "../services/reviewService.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const communityContainer = document.querySelector(".community-container");
-
+  if (!communityContainer) {
+    console.error("Error: .community-container 요소를 찾을 수 없습니다.");
+    return;
+  }
   // 카테고리 데이터 정의
   const categories = [
     {
@@ -45,6 +48,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 고객후기 섹션 추가
     const reviewsHTML = await renderReviews();
     communityContainer.innerHTML += reviewsHTML;
+
+    const reviewsSection = document.querySelector("#reviews-section");
+    if (!reviewsSection) {
+      console.error("Error: #reviews-section 요소를 찾을 수 없습니다.");
+      return;
+    }
 
     // 게시물 클릭 이벤트 추가
     addPostClickEvents();

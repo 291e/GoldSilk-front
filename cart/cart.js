@@ -221,11 +221,24 @@ paymentButton.addEventListener("click", async () => {
       recipient_name: "", // 수령인 이름 초기화
       phone_number: "", // 전화번호 초기화
       message: "", // 요청 사항 초기화
-      cart_items: cartItems.map((item) => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: item.price,
-      })),
+      cart_items: cartItems.map((item) => {
+        const parsedOptions =
+          typeof item.options === "string"
+            ? JSON.parse(item.options)
+            : item.options;
+
+        return {
+          product_id: item.product_id,
+          quantity: item.quantity,
+          price: item.price,
+          options: parsedOptions?.options
+            ? JSON.stringify(parsedOptions.options)
+            : null, // options 필드에 저장
+          etc: parsedOptions?.dimensions
+            ? JSON.stringify(parsedOptions.dimensions)
+            : null, // etc 필드에 저장
+        };
+      }),
     };
 
     console.log("Creating order with data:", newOrder);
